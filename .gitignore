@@ -1,0 +1,7 @@
+node_modules
+.vscode
+pnpm-lock.yaml
+dist
+tmp
+v8-compile-cache-*
+node-compile-cache
