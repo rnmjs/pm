@@ -1,2 +1,1 @@
-# pm
-🌈 Unified Package Manager for Node.js (npm, pnpm, yarn)
+./packages/pm/README.md
