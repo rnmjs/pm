@@ -1,0 +1,28 @@
+{
+  "name": "@rnm/pm",
+  "version": "0.0.0",
+  "description": "Unified Package Manager for Node.js",
+  "keywords": [
+    "corepack",
+    "npm",
+    "pnpm",
+    "yarn",
+    "package",
+    "manager"
+  ],
+  "homepage": "https://github.com/rnmjs/pm",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rnmjs/pm.git"
+  },
+  "license": "MIT",
+  "author": "hellozmj@qq.com",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "node --test --experimental-strip-types"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

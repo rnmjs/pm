@@ -1,0 +1,34 @@
+{
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "pnpm -r build",
+    "install": "pnpm build",
+    "prepare": "fenge install",
+    "release": "pnpm -r publish && changeset tag",
+    "style": "fenge",
+    "style:update": "fenge -u",
+    "test": "pnpm -r test && pnpm style"
+  },
+  "devDependencies": {
+    "@changesets/cli": "2.28.1",
+    "fenge": "0.6.2",
+    "typescript": "5.8.2"
+  },
+  "engines": {
+    "node": ">=22.14.0"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": ">=22.14.0"
+    },
+    "packageManager": {
+      "name": "pnpm",
+      "version": "10.6.3"
+    }
+  }
+}
