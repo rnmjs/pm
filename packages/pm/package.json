@@ -18,11 +18,21 @@
   "license": "MIT",
   "author": "hellozmj@qq.com",
   "type": "module",
+  "bin": {
+    "pm": "./dist/pm.cli.js"
+  },
   "scripts": {
     "build": "tsc",
     "test": "node --test --experimental-strip-types"
   },
+  "dependencies": {
+    "corepack": "0.32.0",
+    "registry-url": "6.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.13.11"
+  },
   "engines": {
-    "node": ">=18.0.0"
+    "node": "^18.20.0 || >=20.10.0"
   }
 }
