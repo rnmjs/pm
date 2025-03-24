@@ -4,13 +4,24 @@ import process from "node:process";
 import registryUrl from "registry-url";
 import { detect } from "./detect.ts";
 import { getCorepackPath } from "./get-corepack-path.ts";
+import { hasPackageJson } from "./has-package-json.ts";
 
 function getRegistry() {
   const registry = registryUrl();
   return registry.endsWith("/") ? registry.slice(0, -1) : registry;
 }
 
-let packageManager = await detect(process.cwd());
+const promiseResult = await Promise.all([
+  hasPackageJson(process.cwd()),
+  detect(process.cwd()),
+]);
+if (!promiseResult[0]) {
+  throw new Error(
+    "No package.json found in the current directory and its parent directories",
+  );
+}
+
+let packageManager = promiseResult[1];
 if (!packageManager) {
   console.log("No package manager detected then fall back to npm");
   packageManager = "npm";
