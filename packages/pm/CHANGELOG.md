@@ -1,5 +1,12 @@
 # @rnm/pm
 
+## 0.0.2
+
+### Patch Changes
+
+- 2e8f9ff: feat: disallow using pm in the projects have no package.json
+- a385a4b: fix: enhance detection
+
 ## 0.0.1
 
 ### Patch Changes
