@@ -5,16 +5,17 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "pnpm -r build",
-    "install": "pnpm build",
+    "build": "pm -r build",
+    "install": "pm build",
     "prepare": "fenge install",
-    "release": "pnpm -r publish && changeset tag",
+    "release": "pm -r publish && changeset tag",
     "style": "fenge",
     "style:update": "fenge -u",
-    "test": "pnpm -r test && pnpm style"
+    "test": "pm -r test && pm style"
   },
   "devDependencies": {
     "@changesets/cli": "2.28.1",
+    "@rnm/pm": "workspace:*",
     "fenge": "0.7.0",
     "typescript": "5.8.2"
   },

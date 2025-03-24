@@ -34,15 +34,15 @@ export async function detect(
     },
   ] = await Promise.all([
     fs
-      .access(packageLockPath, fs.constants.F_OK)
+      .access(packageLockPath)
       .then(() => true)
       .catch(() => false),
     fs
-      .access(yarnLockPath, fs.constants.F_OK)
+      .access(yarnLockPath)
       .then(() => true)
       .catch(() => false),
     fs
-      .access(pnpmLockPath, fs.constants.F_OK)
+      .access(pnpmLockPath)
       .then(() => true)
       .catch(() => false),
     fs
@@ -54,32 +54,34 @@ export async function detect(
   // 1. detect pm by lock files
   if (packageLockExists) {
     return "npm";
-  } else if (yarnLockExists) {
+  }
+  if (yarnLockExists) {
     return "yarn";
-  } else if (pnpmLockExists) {
+  }
+  if (pnpmLockExists) {
     return "pnpm";
   }
+
   // 2. detect pm by `engines` filed
-  else if (packageJsonContent.engines) {
-    if (packageJsonContent.engines["npm"]) {
-      return "npm";
-    } else if (packageJsonContent.engines["yarn"]) {
-      return "yarn";
-    } else if (packageJsonContent.engines["pnpm"]) {
-      return "pnpm";
-    }
+  if (packageJsonContent.engines?.["npm"]) {
+    return "npm";
   }
+  if (packageJsonContent.engines?.["yarn"]) {
+    return "yarn";
+  }
+  if (packageJsonContent.engines?.["pnpm"]) {
+    return "pnpm";
+  }
+
   // 3. detect pm by `devEngines` filed
-  else if (packageJsonContent.devEngines?.packageManager?.name) {
-    const packageManagerName =
-      packageJsonContent.devEngines.packageManager.name;
-    if (packageManagerName === "npm") {
-      return "npm";
-    } else if (packageManagerName === "yarn") {
-      return "yarn";
-    } else if (packageManagerName === "pnpm") {
-      return "pnpm";
-    }
+  if (packageJsonContent.devEngines?.packageManager?.name === "npm") {
+    return "npm";
+  }
+  if (packageJsonContent.devEngines?.packageManager?.name === "yarn") {
+    return "yarn";
+  }
+  if (packageJsonContent.devEngines?.packageManager?.name === "pnpm") {
+    return "pnpm";
   }
 
   // 4. circularly find up
