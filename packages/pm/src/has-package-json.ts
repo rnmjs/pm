@@ -7,7 +7,7 @@ export async function hasPackageJson(directory: string): Promise<boolean> {
   }
 
   const result = await fs
-    .access(directory)
+    .access(path.join(directory, "package.json"))
     .then(() => true)
     .catch(() => false);
   if (result) return true;
