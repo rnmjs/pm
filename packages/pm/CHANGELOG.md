@@ -1,5 +1,12 @@
 # @rnm/pm
 
+## 0.0.5
+
+### Patch Changes
+
+- 91d2171: feat: support `packageManager` field
+- ba36f7b: fix: force to use pnpm or yarn when calling them
+
 ## 0.0.4
 
 ### Patch Changes
