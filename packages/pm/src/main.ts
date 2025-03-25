@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 import childProcess from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -147,23 +146,24 @@ function getRegistry() {
   return registry.endsWith("/") ? registry.slice(0, -1) : registry;
 }
 
-async function main() {
-  const promiseResult = await Promise.all([
+export async function main({
+  forceTo,
+  onDetected,
+}: {
+  forceTo?: SupportedPm;
+  onDetected?: (pm: SupportedPm | undefined) => void;
+}) {
+  const [hasPkg, packageManager = "npm"] = await Promise.all([
     hasPackageJson(process.cwd()),
-    detect(process.cwd()),
+    forceTo || detect(process.cwd()),
   ]);
-  if (!promiseResult[0]) {
+  if (!hasPkg) {
     throw new Error(
       "No package.json found in the current directory and its parent directories",
     );
   }
-
-  let packageManager = promiseResult[1];
-  if (!packageManager) {
-    console.log("No package manager detected then fall back to npm");
-    packageManager = "npm";
-  } else {
-    console.log(`Detected ${packageManager} as package manager`);
+  if (!forceTo) {
+    onDetected?.(packageManager);
   }
 
   childProcess.spawnSync(
@@ -179,5 +179,3 @@ async function main() {
     },
   );
 }
-
-await main();
