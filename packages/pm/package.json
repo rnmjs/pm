@@ -19,7 +19,9 @@
   "author": "hellozmj@qq.com",
   "type": "module",
   "bin": {
-    "pm": "./dist/pm.cli.js"
+    "pm": "./dist/pm.cli.js",
+    "pnpm": "./dist/pnpm.cli.js",
+    "yarn": "./dist/yarn.cli.js"
   },
   "scripts": {
     "build": "tsc",
