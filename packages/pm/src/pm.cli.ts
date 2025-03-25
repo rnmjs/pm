@@ -7,15 +7,15 @@ import { fileURLToPath } from "node:url";
 import corepackPkgJson from "corepack/package.json" with { type: "json" };
 import registryUrl from "registry-url";
 
+type SupportedPm = "npm" | "yarn" | "pnpm";
+
 // This function may replaced by `package-manager-detector` package.
 /**
  * Detects the package manager used in the specified directory.
  * @param directory - The absolute path to the directory to check.
  * @returns 'npm' | 'pnpm' | 'yarn' | undefined - The detected package manager or undefined if none is found.
  */
-async function detect(
-  directory: string,
-): Promise<"npm" | "pnpm" | "yarn" | undefined> {
+async function detect(directory: string): Promise<SupportedPm | undefined> {
   if (!path.isAbsolute(directory)) {
     throw new Error("directory must be an absolute path");
   }
@@ -35,6 +35,7 @@ async function detect(
     boolean,
     boolean,
     {
+      packageManager?: string;
       engines?: Record<string, string>;
       devEngines?: { packageManager?: { name?: string } };
     },
@@ -80,17 +81,27 @@ async function detect(
   }
 
   // 3. detect pm by `devEngines` filed
-  if (packageJsonContent.devEngines?.packageManager?.name === "npm") {
-    return "npm";
-  }
-  if (packageJsonContent.devEngines?.packageManager?.name === "yarn") {
-    return "yarn";
-  }
-  if (packageJsonContent.devEngines?.packageManager?.name === "pnpm") {
-    return "pnpm";
+  const devEnginesPackageManager =
+    packageJsonContent.devEngines?.packageManager?.name;
+  if (
+    devEnginesPackageManager === "npm" ||
+    devEnginesPackageManager === "yarn" ||
+    devEnginesPackageManager === "pnpm"
+  ) {
+    return devEnginesPackageManager;
   }
 
-  // 4. circularly find up
+  // 4. detect pm by `packageManager` field
+  const packageManager = packageJsonContent.packageManager?.split("@")[0];
+  if (
+    packageManager === "npm" ||
+    packageManager === "yarn" ||
+    packageManager === "pnpm"
+  ) {
+    return packageManager;
+  }
+
+  // 5. circularly find up
   const parentDirectory = path.dirname(directory);
   if (parentDirectory === directory) return undefined; // stop at the root directory
 
