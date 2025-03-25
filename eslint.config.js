@@ -6,7 +6,5 @@ export default new Builder()
     omit: ["publint/warning", "publint/error"],
   })
   .enableJavaScript()
-  .enableTypeScript({
-    omit: ["esm/no-side-effect-imports"],
-  })
+  .enableTypeScript()
   .toConfig();
