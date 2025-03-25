@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.0.4
+
+### Patch Changes
+
+- 9ccb1f2: feat: add `pnpm` and `yarn` to bin
+
 ## 0.0.3
 
 ### Patch Changes
