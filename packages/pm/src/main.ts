@@ -57,29 +57,17 @@ async function detect(directory: string): Promise<SupportedPm | undefined> {
       .catch(() => ({})),
   ]);
 
-  // 1. detect pm by lock files
-  if (packageLockExists) {
-    return "npm";
-  }
-  if (yarnLockExists) {
-    return "yarn";
-  }
-  if (pnpmLockExists) {
-    return "pnpm";
-  }
-
-  // 2. detect pm by `engines` filed
-  if (packageJsonContent.engines?.["npm"]) {
-    return "npm";
-  }
-  if (packageJsonContent.engines?.["yarn"]) {
-    return "yarn";
-  }
-  if (packageJsonContent.engines?.["pnpm"]) {
-    return "pnpm";
+  // 1. detect pm by `packageManager` field
+  const packageManager = packageJsonContent.packageManager?.split("@")[0];
+  if (
+    packageManager === "npm" ||
+    packageManager === "yarn" ||
+    packageManager === "pnpm"
+  ) {
+    return packageManager;
   }
 
-  // 3. detect pm by `devEngines` filed
+  // 2. detect pm by `devEngines` filed
   const devEnginesPackageManager =
     packageJsonContent.devEngines?.packageManager?.name;
   if (
@@ -90,14 +78,27 @@ async function detect(directory: string): Promise<SupportedPm | undefined> {
     return devEnginesPackageManager;
   }
 
-  // 4. detect pm by `packageManager` field
-  const packageManager = packageJsonContent.packageManager?.split("@")[0];
-  if (
-    packageManager === "npm" ||
-    packageManager === "yarn" ||
-    packageManager === "pnpm"
-  ) {
-    return packageManager;
+  // 3. detect pm by `engines` filed
+  // Note: Corepack does not support `engines` field.
+  if (packageJsonContent.engines?.["npm"]) {
+    return "npm";
+  }
+  if (packageJsonContent.engines?.["yarn"]) {
+    return "yarn";
+  }
+  if (packageJsonContent.engines?.["pnpm"]) {
+    return "pnpm";
+  }
+
+  // 4. detect pm by lock files
+  if (packageLockExists) {
+    return "npm";
+  }
+  if (yarnLockExists) {
+    return "yarn";
+  }
+  if (pnpmLockExists) {
+    return "pnpm";
   }
 
   // 5. circularly find up
