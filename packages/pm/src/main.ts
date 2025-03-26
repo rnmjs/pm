@@ -8,103 +8,75 @@ import registryUrl from "registry-url";
 
 type SupportedPm = "npm" | "yarn" | "pnpm";
 
-// This function may replaced by `package-manager-detector` package.
+interface DetectResult {
+  name: SupportedPm;
+  version?: string;
+}
+
+const exists = async (p: string) =>
+  await fs
+    .access(p)
+    .then(() => true)
+    .catch(() => false);
+const importPkgJson = async (p: string) =>
+  await fs
+    .readFile(p, "utf8")
+    .then<{
+      packageManager?: string;
+      engines?: Record<string, string>;
+      devEngines?: { packageManager?: { name?: string; version?: string } };
+    }>(JSON.parse)
+    .catch(() => undefined);
+
 /**
  * Detects the package manager used in the specified directory.
  * @param directory - The absolute path to the directory to check.
- * @returns 'npm' | 'pnpm' | 'yarn' | undefined - The detected package manager or undefined if none is found.
  */
-async function detect(directory: string): Promise<SupportedPm | undefined> {
+async function detect(directory: string): Promise<DetectResult | undefined> {
   if (!path.isAbsolute(directory)) {
     throw new Error("directory must be an absolute path");
   }
 
-  const packageLockPath = path.join(directory, "package-lock.json");
-  const yarnLockPath = path.join(directory, "yarn.lock");
-  const pnpmLockPath = path.join(directory, "pnpm-lock.yaml");
-  const packageJsonPath = path.join(directory, "package.json");
-
-  const [
-    packageLockExists,
-    yarnLockExists,
-    pnpmLockExists,
-    packageJsonContent,
-  ]: [
-    boolean,
-    boolean,
-    boolean,
-    {
-      packageManager?: string;
-      engines?: Record<string, string>;
-      devEngines?: { packageManager?: { name?: string } };
-    },
-  ] = await Promise.all([
-    fs
-      .access(packageLockPath)
-      .then(() => true)
-      .catch(() => false),
-    fs
-      .access(yarnLockPath)
-      .then(() => true)
-      .catch(() => false),
-    fs
-      .access(pnpmLockPath)
-      .then(() => true)
-      .catch(() => false),
-    fs
-      .readFile(packageJsonPath, "utf8")
-      .then(JSON.parse)
-      .catch(() => ({})),
-  ]);
+  const [packageLockExists, yarnLockExists, pnpmLockExists, pkgJsonContent] =
+    await Promise.all([
+      exists(path.join(directory, "package-lock.json")),
+      exists(path.join(directory, "yarn.lock")),
+      exists(path.join(directory, "pnpm-lock.yaml")),
+      importPkgJson(path.join(directory, "package.json")),
+    ]);
 
   // 1. detect pm by `packageManager` field
-  const packageManager = packageJsonContent.packageManager?.split("@")[0];
+  const [packageManager, rest] =
+    pkgJsonContent?.packageManager?.split("@") ?? [];
   if (
     packageManager === "npm" ||
     packageManager === "yarn" ||
     packageManager === "pnpm"
   ) {
-    return packageManager;
+    const version = rest?.split("+")[0];
+    return { name: packageManager, ...(version && { version }) };
   }
 
   // 2. detect pm by `devEngines` filed
-  const devEnginesPackageManager =
-    packageJsonContent.devEngines?.packageManager?.name;
-  if (
-    devEnginesPackageManager === "npm" ||
-    devEnginesPackageManager === "yarn" ||
-    devEnginesPackageManager === "pnpm"
-  ) {
-    return devEnginesPackageManager;
+  const { name, version } = pkgJsonContent?.devEngines?.packageManager ?? {};
+  if (name === "npm" || name === "yarn" || name === "pnpm") {
+    return { name, ...(version && { version }) };
   }
 
   // 3. detect pm by `engines` filed
-  // Note: Corepack does not support `engines` field.
-  if (packageJsonContent.engines?.["npm"]) {
-    return "npm";
-  }
-  if (packageJsonContent.engines?.["yarn"]) {
-    return "yarn";
-  }
-  if (packageJsonContent.engines?.["pnpm"]) {
-    return "pnpm";
-  }
+  // Note: Corepack does not support `engines` field. So the result doesn't include the version.
+  if (pkgJsonContent?.engines?.["npm"]) return { name: "npm" };
+  if (pkgJsonContent?.engines?.["yarn"]) return { name: "yarn" };
+  if (pkgJsonContent?.engines?.["pnpm"]) return { name: "pnpm" };
 
   // 4. detect pm by lock files
-  if (packageLockExists) {
-    return "npm";
-  }
-  if (yarnLockExists) {
-    return "yarn";
-  }
-  if (pnpmLockExists) {
-    return "pnpm";
-  }
+  if (packageLockExists) return { name: "npm" };
+  if (yarnLockExists) return { name: "yarn" };
+  if (pnpmLockExists) return { name: "pnpm" };
 
   // 5. circularly find up
   const parentDirectory = path.dirname(directory);
   if (parentDirectory === directory) return undefined; // stop at the root directory
-
   return await detect(parentDirectory);
 }
 
@@ -130,15 +102,11 @@ async function hasPackageJson(directory: string): Promise<boolean> {
     throw new Error("directory must be an absolute path");
   }
 
-  const result = await fs
-    .access(path.join(directory, "package.json"))
-    .then(() => true)
-    .catch(() => false);
+  const result = await exists(path.join(directory, "package.json"));
   if (result) return true;
 
   const parentDirectory = path.dirname(directory);
   if (parentDirectory === directory) return false; // stop at the root
-
   return await hasPackageJson(parentDirectory);
 }
 
@@ -152,19 +120,27 @@ export async function main({
   onDetected,
 }: {
   forceTo?: SupportedPm;
-  onDetected?: (pm: SupportedPm | undefined) => void;
+  onDetected?: (pm: DetectResult | undefined) => void;
 }) {
-  const [hasPkg, packageManager = "npm"] = await Promise.all([
+  const [hasPkg, packageManager] = await Promise.all([
     hasPackageJson(process.cwd()),
-    forceTo || detect(process.cwd()),
+    new Promise<SupportedPm>((resolve, reject) => {
+      forceTo
+        ? resolve(forceTo)
+        : detect(process.cwd())
+            .then((detectedResult) => {
+              onDetected?.(detectedResult);
+              resolve(detectedResult?.name ?? "npm");
+            })
+            .catch((e: Error) => {
+              reject(e);
+            });
+    }),
   ]);
   if (!hasPkg) {
     throw new Error(
       "No package.json found in the current directory and its parent directories",
     );
-  }
-  if (!forceTo) {
-    onDetected?.(packageManager);
   }
 
   childProcess.spawnSync(
