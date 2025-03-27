@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.0.6
+
+### Patch Changes
+
+- 571d6f3: feat: print detected version
+
 ## 0.0.5
 
 ### Patch Changes
