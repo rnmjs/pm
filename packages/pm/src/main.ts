@@ -28,22 +28,29 @@ const importPkgJson = async (p: string) =>
     }>(JSON.parse)
     .catch(() => undefined);
 
+async function findUp(name: string, { cwd = process.cwd() } = {}) {
+  const result = path.join(cwd, name);
+  const existing = await exists(result);
+  if (existing) return result;
+  const parent = path.dirname(cwd);
+  if (parent === cwd) return undefined;
+  return await findUp(name, { cwd: parent });
+}
+
 /**
  * Detects the package manager used in the specified directory.
  * @param directory - The absolute path to the directory to check.
  */
-async function detect(directory: string): Promise<DetectResult | undefined> {
-  if (!path.isAbsolute(directory)) {
-    throw new Error("directory must be an absolute path");
+async function detect(
+  directory = process.cwd(),
+): Promise<DetectResult | undefined> {
+  const pkgJsonPath = await findUp("package.json", { cwd: directory });
+  if (!pkgJsonPath) {
+    throw new Error(
+      "No package.json found in the current directory and its parent directories.",
+    );
   }
-
-  const [packageLockExists, yarnLockExists, pnpmLockExists, pkgJsonContent] =
-    await Promise.all([
-      exists(path.join(directory, "package-lock.json")),
-      exists(path.join(directory, "yarn.lock")),
-      exists(path.join(directory, "pnpm-lock.yaml")),
-      importPkgJson(path.join(directory, "package.json")),
-    ]);
+  const pkgJsonContent = await importPkgJson(pkgJsonPath);
 
   // 1. detect pm by `packageManager` field
   const [packageManager, rest] =
@@ -70,14 +77,20 @@ async function detect(directory: string): Promise<DetectResult | undefined> {
   if (pkgJsonContent?.engines?.["pnpm"]) return { name: "pnpm" };
 
   // 4. detect pm by lock files
-  if (packageLockExists) return { name: "npm" };
-  if (yarnLockExists) return { name: "yarn" };
-  if (pnpmLockExists) return { name: "pnpm" };
-
-  // 5. circularly find up
-  const parentDirectory = path.dirname(directory);
-  if (parentDirectory === directory) return undefined; // stop at the root directory
-  return await detect(parentDirectory);
+  const locks = (
+    await Promise.all([
+      findUp("package-lock.json", { cwd: directory }),
+      findUp("yarn.lock", { cwd: directory }),
+      findUp("pnpm-lock.yaml", { cwd: directory }),
+    ])
+  ).filter((p) => p !== undefined);
+  if (locks.length > 1) {
+    throw new Error("Multiple lock files found. Please remove one of them.");
+  }
+  if (locks[0]?.endsWith("package-lock.json")) return { name: "npm" };
+  if (locks[0]?.endsWith("yarn.lock")) return { name: "yarn" };
+  if (locks[0]?.endsWith("pnpm-lock.yaml")) return { name: "pnpm" };
+  return undefined;
 }
 
 /**
@@ -93,23 +106,6 @@ function getCorepackPath(): string {
   );
 }
 
-/**
- * Determines whether a package.json file exists in the current directory or any of its parent directories.
- * @param directory - The absolute path to the directory to check.
- */
-async function hasPackageJson(directory: string): Promise<boolean> {
-  if (!path.isAbsolute(directory)) {
-    throw new Error("directory must be an absolute path");
-  }
-
-  const result = await exists(path.join(directory, "package.json"));
-  if (result) return true;
-
-  const parentDirectory = path.dirname(directory);
-  if (parentDirectory === directory) return false; // stop at the root
-  return await hasPackageJson(parentDirectory);
-}
-
 function getRegistry() {
   const registry = registryUrl();
   return registry.endsWith("/") ? registry.slice(0, -1) : registry;
@@ -122,25 +118,11 @@ export async function main({
   forceTo?: SupportedPm;
   onDetected?: (pm: DetectResult | undefined) => void;
 }) {
-  const [hasPkg, packageManager] = await Promise.all([
-    hasPackageJson(process.cwd()),
-    new Promise<SupportedPm>((resolve, reject) => {
-      forceTo
-        ? resolve(forceTo)
-        : detect(process.cwd())
-            .then((detectedResult) => {
-              onDetected?.(detectedResult);
-              resolve(detectedResult?.name ?? "npm");
-            })
-            .catch((e: Error) => {
-              reject(e);
-            });
-    }),
-  ]);
-  if (!hasPkg) {
-    throw new Error(
-      "No package.json found in the current directory and its parent directories",
-    );
+  let packageManager = forceTo;
+  if (!packageManager) {
+    const detectResult = await detect();
+    onDetected?.(detectResult);
+    packageManager = detectResult?.name ?? "npm";
   }
 
   childProcess.spawnSync(
