@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.1.0
+
+### Minor Changes
+
+- a595ec3: chore: docs readme
+
 ## 0.0.6
 
 ### Patch Changes
