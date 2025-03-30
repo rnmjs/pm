@@ -125,7 +125,7 @@ export async function main({
     packageManager = detectResult?.name ?? "npm";
   }
 
-  childProcess.spawnSync(
+  const cp = childProcess.spawnSync(
     getCorepackPath(),
     [packageManager, ...process.argv.slice(2)],
     {
@@ -137,4 +137,6 @@ export async function main({
       },
     },
   );
+  if (cp.error) throw cp.error;
+  return cp.status;
 }
