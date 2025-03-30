@@ -51,9 +51,10 @@ In summary: **Use npm for installing global CLI tools, and use `@rnm/pm` for dai
 
 ## Highlights
 
-- **🎯 Auto Detect**: Auto detect the correct package manager (npm, yarn, pnpm).
-- **⬇️ Auto Fallback**: Auto fallback to npm if no package manager is detected.
-- **🔀 Version Management**: Auto switch to the proper version of the detected package manager.
+- **📦 All-in-One**: Supports npm, yarn, and pnpm without extra installations.
+- **🎯 Auto Detect**: Auto detects the correct package manager.
+- **⬇️ Auto Fallback**: Auto fallbacks to npm if no package manager is detected.
+- **🔀 Version Management**: Auto switches to the proper version of the detected package manager.
 - **⚡️ Zero Configuration**: No configuration required. Just install globally and start using it.
 - **🌍 Global Safety**: Does not modify or override existing global package managers.
 - **🪶 Lightweight**: Tiny codebase (<200 lines).
@@ -98,10 +99,15 @@ pm run dev
 
 ## Migration from Corepack
 
-1. If Corepack has enabled npm, disable it by running `npm i npm -g` to restore the default behavior.
-2. Run `corepack disable yarn pnpm` to disable Corepack.
-3. Install `@rnm/pm` globally.
-4. Replace `npm`, `yarn`, and `pnpm` with `pm` in your projects.
+1. (Optional) If Corepack has enabled npm, disable it by running `npm i npm -g` to restore the default behavior.
+2. (Optional) Remove [Corepack environment variables](https://github.com/nodejs/corepack?tab=readme-ov-file#environment-variables) in `~/.zshrc` or `~/.bashrc`.
+3. Run `corepack disable yarn pnpm` to disable Corepack.
+4. Install `@rnm/pm` globally.
+5. Replace `npm`, `yarn`, and `pnpm` with `pm` in your projects.
+
+## Show your support
+
+Give a ⭐️ if this project helped you!
 
 ## License
 
