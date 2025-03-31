@@ -191,6 +191,27 @@ describe("main", () => {
     );
   });
 
+  it("should crash when detecting multi lock fils", async () => {
+    await fs.mkdir(path.join(tmpDir, "detect-multi-lock-files"));
+    await fs.mkdir(path.join(tmpDir, "detect-multi-lock-files", "nested"));
+    process.chdir(path.join(tmpDir, "detect-multi-lock-files", "nested"));
+    await fs.writeFile("package.json", JSON.stringify({}), "utf8");
+    await fs.writeFile("yarn.lock", "", "utf8");
+    await fs.writeFile(path.join("..", "package-lock.json"), "", "utf8");
+
+    spawnSyncMock.mockReturnValue({
+      status: 0,
+    } as childProcess.SpawnSyncReturns<Buffer>);
+    process.argv = ["node", "main.js", "--help"];
+
+    const result = main({});
+
+    expect(result).rejects.toThrowError(
+      /^Multiple lock files found. Please remove one of them\.$/,
+    );
+    expect(childProcess.spawnSync).toHaveBeenCalledTimes(0);
+  });
+
   it("should detect and fallback to npm", async () => {
     await fs.mkdir(path.join(tmpDir, "detect-and-fallback"));
     process.chdir(path.join(tmpDir, "detect-and-fallback"));

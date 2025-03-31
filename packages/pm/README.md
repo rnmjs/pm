@@ -4,6 +4,7 @@
 [![](https://img.shields.io/npm/v/@rnm/pm.svg)](https://www.npmjs.com/package/@rnm/pm)
 [![](https://img.shields.io/npm/dm/@rnm/pm.svg)](https://www.npmjs.com/package/@rnm/pm)
 [![](https://packagephobia.com/badge?p=@rnm/pm)](https://packagephobia.com/result?p=@rnm/pm)
+[![](https://raw.githubusercontent.com/rnmjs/pm/refs/heads/main/packages/pm/badge/coverage.svg)]()
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/rnmjs/pm?tab=readme-ov-file#contributing)
 
 💼 Unified Package Manager for Node.js (npm, yarn, pnpm)
