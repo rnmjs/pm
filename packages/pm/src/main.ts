@@ -5,6 +5,7 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 import corepackPkgJson from "corepack/package.json" with { type: "json" };
 import registryUrl from "registry-url";
+import { importMetaResolve } from "./import-meta-resolve.ts";
 
 type SupportedPm = "npm" | "yarn" | "pnpm";
 
@@ -98,7 +99,7 @@ async function detect(
  */
 function getCorepackPath(): string {
   const corepackPkgJsonPath = fileURLToPath(
-    import.meta.resolve("corepack/package.json"),
+    importMetaResolve("corepack/package.json"),
   );
   return path.resolve(
     path.dirname(corepackPkgJsonPath),
