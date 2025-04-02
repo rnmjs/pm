@@ -38,20 +38,12 @@ async function findUp(name: string, { cwd = process.cwd() } = {}) {
   return await findUp(name, { cwd: parent });
 }
 
-/**
- * Detects the package manager used in the specified directory.
- * @param directory - The absolute path to the directory to check.
- */
-async function detect(
+async function detectByPackageJson(
   directory = process.cwd(),
 ): Promise<DetectResult | undefined> {
-  const pkgJsonPath = await findUp("package.json", { cwd: directory });
-  if (!pkgJsonPath) {
-    throw new Error(
-      "No package.json found in the current directory and its parent directories.",
-    );
-  }
-  const pkgJsonContent = await importPkgJson(pkgJsonPath);
+  const pkgJsonContent = await importPkgJson(
+    path.join(directory, "package.json"),
+  );
 
   // 1. detect pm by `packageManager` field
   const [packageManager, rest] =
@@ -77,7 +69,26 @@ async function detect(
   if (pkgJsonContent?.engines?.["yarn"]) return { name: "yarn" };
   if (pkgJsonContent?.engines?.["pnpm"]) return { name: "pnpm" };
 
-  // 4. detect pm by lock files
+  const parent = path.dirname(directory);
+  if (directory === parent) return undefined;
+  return await detectByPackageJson(parent);
+}
+
+/**
+ * Detects the package manager used in the specified directory.
+ * @param directory - The absolute path to the directory to check.
+ */
+async function detect(
+  directory = process.cwd(),
+): Promise<DetectResult | undefined> {
+  const pkgJsonPath = await findUp("package.json", { cwd: directory });
+  if (!pkgJsonPath) throw new Error("No package.json found.");
+
+  // 1. detect pm by package.json
+  const pm = await detectByPackageJson(path.dirname(pkgJsonPath));
+  if (pm) return pm;
+
+  // 2. detect pm by lock files
   const locks = (
     await Promise.all([
       findUp("package-lock.json", { cwd: directory }),

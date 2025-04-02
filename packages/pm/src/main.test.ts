@@ -60,11 +60,10 @@ describe("main", () => {
     ).toBe(true);
   });
 
-  it("should cause error in a directory without package.json", async () => {
+  it("should cause error in a directory without package.json", () => {
     process.chdir(process.env["HOME"] ?? "/");
-    await expect(() => main({})).rejects.toThrowError(
-      /^No package.json found in the current directory and its parent directories\.$/,
-    );
+    const result = main({});
+    expect(result).rejects.toThrowError(/^No package.json found\.$/);
   });
 
   it("should detect by packageManager field", async () => {
@@ -82,7 +81,12 @@ describe("main", () => {
     } as childProcess.SpawnSyncReturns<Buffer>);
     process.argv = ["node", "main.js", "--help"];
 
-    const status = await main({});
+    const status = await main({
+      onDetected: (detected) => {
+        expect(detected?.name).toBe("yarn");
+        expect(detected?.version).toBe("1.1.1");
+      },
+    });
 
     expect(status).toBe(0);
     expect(childProcess.spawnSync).toHaveBeenCalled();
@@ -107,7 +111,7 @@ describe("main", () => {
         devEngines: {
           packageManager: {
             name: "npm",
-            version: "1.1.1",
+            version: "1.2.3",
           },
         },
       }),
@@ -118,7 +122,12 @@ describe("main", () => {
     } as childProcess.SpawnSyncReturns<Buffer>);
     process.argv = ["node", "main.js", "--help"];
 
-    const status = await main({});
+    const status = await main({
+      onDetected: (detected) => {
+        expect(detected?.name).toBe("npm");
+        expect(detected?.version).toBe("1.2.3");
+      },
+    });
 
     expect(status).toBe(0);
     expect(childProcess.spawnSync).toHaveBeenCalled();
@@ -140,7 +149,7 @@ describe("main", () => {
     await fs.writeFile(
       "package.json",
       JSON.stringify({
-        packageManager: "yarn@1.1.1",
+        engines: { pnpm: "9.5.5" },
       }),
       "utf8",
     );
@@ -149,8 +158,55 @@ describe("main", () => {
     } as childProcess.SpawnSyncReturns<Buffer>);
     process.argv = ["node", "main.js", "--help"];
 
-    const status = await main({});
+    const status = await main({
+      onDetected: (detected) => {
+        expect(detected?.name).toBe("pnpm");
+        expect(detected?.version).toBeUndefined();
+      },
+    });
 
+    expect(status).toBe(0);
+    expect(childProcess.spawnSync).toHaveBeenCalled();
+    expect(childProcess.spawnSync).toBeCalledWith(
+      path.resolve(
+        createRequire(import.meta.url).resolve("corepack/package.json"),
+        "..",
+        "dist",
+        "corepack.js",
+      ),
+      ["pnpm", "--help"],
+      { stdio: "inherit", env: { ...process.env } },
+    );
+  });
+
+  it("should detect by package.json first instead of lock files", async () => {
+    await fs.mkdir(path.join(tmpDir, "detect-by-package-json"));
+    await fs.mkdir(path.join(tmpDir, "detect-by-package-json", "nested"));
+    await fs.writeFile(
+      path.join(tmpDir, "detect-by-package-json", "package.json"),
+      '{"packageManager": "yarn@1.10.0"}',
+    );
+    await fs.writeFile(
+      path.join(tmpDir, "detect-by-package-json", "nested", "package.json"),
+      "{}",
+    );
+    await fs.writeFile(
+      path.join(tmpDir, "detect-by-package-json", "nested", "pnpm-lock.yaml"),
+      "",
+    );
+
+    process.chdir(path.join(tmpDir, "detect-by-package-json", "nested"));
+    spawnSyncMock.mockReturnValue({
+      status: 0,
+    } as childProcess.SpawnSyncReturns<Buffer>);
+    process.argv = ["node", "main.js", "--help"];
+
+    const status = await main({
+      onDetected: (detected) => {
+        expect(detected?.name).toBe("yarn");
+        expect(detected?.version).toBe("1.10.0");
+      },
+    });
     expect(status).toBe(0);
     expect(childProcess.spawnSync).toHaveBeenCalled();
     expect(childProcess.spawnSync).toBeCalledWith(
@@ -175,7 +231,12 @@ describe("main", () => {
     } as childProcess.SpawnSyncReturns<Buffer>);
     process.argv = ["node", "main.js", "--help"];
 
-    const status = await main({});
+    const status = await main({
+      onDetected: (detected) => {
+        expect(detected?.name).toBe("yarn");
+        expect(detected?.version).toBeUndefined();
+      },
+    });
 
     expect(status).toBe(0);
     expect(childProcess.spawnSync).toHaveBeenCalled();
@@ -221,7 +282,11 @@ describe("main", () => {
     } as childProcess.SpawnSyncReturns<Buffer>);
     process.argv = ["node", "main.js", "--help"];
 
-    const status = await main({});
+    const status = await main({
+      onDetected: (detected) => {
+        expect(detected).toBeUndefined();
+      },
+    });
 
     expect(status).toBe(0);
     expect(childProcess.spawnSync).toHaveBeenCalled();
@@ -243,7 +308,11 @@ describe("main", () => {
     } as childProcess.SpawnSyncReturns<Buffer>);
     process.argv = ["node", "main.js", "--help"];
 
-    const status = await main({});
+    const status = await main({
+      onDetected: (detected) => {
+        expect(detected?.name).toBe("pnpm");
+      },
+    });
 
     expect(status).toBe(1);
     expect(childProcess.spawnSync).toHaveBeenCalled();
