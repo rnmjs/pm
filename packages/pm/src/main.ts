@@ -58,13 +58,16 @@ async function detectByPackageJson(
   }
 
   // 2. detect pm by `devEngines` filed
-  const { name, version } = pkgJsonContent?.devEngines?.packageManager ?? {};
+  const { name, version: devEnginesVer } =
+    pkgJsonContent?.devEngines?.packageManager ?? {};
   if (name === "npm" || name === "yarn" || name === "pnpm") {
+    const version = devEnginesVer?.split("+")[0];
     return { name, ...(version && { version }) };
   }
 
   // 3. detect pm by `engines` filed
   // Note: Corepack does not support `engines` field. So the result doesn't include the version.
+  // TODO: Trace https://github.com/nodejs/corepack/issues/694.
   if (pkgJsonContent?.engines?.["npm"]) return { name: "npm" };
   if (pkgJsonContent?.engines?.["yarn"]) return { name: "yarn" };
   if (pkgJsonContent?.engines?.["pnpm"]) return { name: "pnpm" };

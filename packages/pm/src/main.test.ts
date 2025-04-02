@@ -111,7 +111,7 @@ describe("main", () => {
         devEngines: {
           packageManager: {
             name: "npm",
-            version: "1.2.3",
+            version: "1.2.3+foobarbaz",
           },
         },
       }),
