@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.1.3
+
+### Patch Changes
+
+- 19f0d26: fix: align the corepack behavior when detecting `devEngines` field
+
 ## 0.1.2
 
 ### Patch Changes
