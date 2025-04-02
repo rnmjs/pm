@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.1.2
+
+### Patch Changes
+
+- 078e311: fix: detect by package.json first instead of lock files
+
 ## 0.1.1
 
 ### Patch Changes
