@@ -1,5 +1,6 @@
 import childProcess from "node:child_process";
 import fs from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -132,7 +133,7 @@ export async function main({
 }: {
   forceTo?: SupportedPm;
   onDetected?: (pm: DetectResult | undefined) => void;
-}) {
+}): Promise<number> {
   let packageManager = forceTo;
   if (!packageManager) {
     const detectResult = await detect();
@@ -140,7 +141,7 @@ export async function main({
     packageManager = detectResult?.name ?? "npm";
   }
 
-  const cp = childProcess.spawnSync(
+  const cp = childProcess.spawn(
     getCorepackPath(),
     [packageManager, ...process.argv.slice(2)],
     {
@@ -152,6 +153,19 @@ export async function main({
       },
     },
   );
-  if (cp.error) throw cp.error;
-  return cp.status;
+
+  const listener = (signal: NodeJS.Signals) => !cp.killed && cp.kill(signal);
+  process.on("SIGINT", listener);
+  process.on("SIGTERM", listener);
+
+  return await new Promise((resolve, reject) => {
+    cp.on("error", (err) => {
+      reject(err);
+    });
+    cp.on("close", (code, signal) => {
+      resolve(
+        code ?? (signal !== null ? 128 + os.constants.signals[signal] : 1),
+      );
+    });
+  });
 }
