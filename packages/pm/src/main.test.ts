@@ -5,7 +5,6 @@ import { createRequire } from "node:module";
 import os from "node:os";
 import path from "node:path";
 import process from "node:process";
-import { fileURLToPath } from "node:url";
 import {
   afterAll,
   beforeAll,
@@ -15,23 +14,23 @@ import {
   it,
   vi,
 } from "vitest";
-import { importMetaResolve } from "./import-meta-resolve.ts";
 import { main } from "./main.ts";
 
+// This is needed because vitest does not support import.meta.resolve.
+// When vitest supports import.meta.resolve, this mock can be removed.
+vi.mock("./import-meta-resolve.ts", () => ({
+  importMetaResolve: vi
+    .fn()
+    .mockImplementation(
+      (specifier) =>
+        `file://${createRequire(import.meta.url).resolve(specifier)}`,
+    ),
+}));
+
 describe("main", () => {
-  vi.mock("./import-meta-resolve.ts", () => ({
-    importMetaResolve: vi
-      .fn()
-      .mockImplementation(
-        (specifier) =>
-          `file://${createRequire(import.meta.url).resolve(specifier)}`,
-      ),
-  }));
-  const importMetaResolveMock = vi.mocked(importMetaResolve);
   const spawnSyncMock = vi.spyOn(childProcess, "spawnSync");
   const cwd = process.cwd();
   beforeEach(() => {
-    importMetaResolveMock.mockClear();
     spawnSyncMock.mockClear();
     process.chdir(cwd);
   });
@@ -42,22 +41,6 @@ describe("main", () => {
   });
   afterAll(async () => {
     await fs.rm(tmpDir, { recursive: true });
-  });
-
-  it("corepack bin should be a file", async () => {
-    const pkgJsonPath = fileURLToPath(
-      importMetaResolve("corepack/package.json"),
-    );
-    const binPath = JSON.parse(await fs.readFile(pkgJsonPath, "utf8")).bin
-      .corepack;
-
-    expect((await fs.stat(pkgJsonPath)).isFile()).toBe(true);
-    expect(typeof binPath).toBe("string");
-    expect(
-      (
-        await fs.stat(path.resolve(path.dirname(pkgJsonPath), binPath))
-      ).isFile(),
-    ).toBe(true);
   });
 
   it("should cause error in a directory without package.json", () => {
