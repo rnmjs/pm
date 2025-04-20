@@ -1,0 +1,8 @@
+{
+  "mode": "pre",
+  "tag": "beta",
+  "initialVersions": {
+    "@rnm/pm": "0.1.4"
+  },
+  "changesets": []
+}
