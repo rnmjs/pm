@@ -1,4 +1,3 @@
-import type { Buffer } from "node:buffer";
 import childProcess from "node:child_process";
 import fs from "node:fs/promises";
 import { createRequire } from "node:module";
@@ -28,10 +27,21 @@ vi.mock("./import-meta-resolve.ts", () => ({
 }));
 
 describe("main", () => {
-  const spawnSyncMock = vi.spyOn(childProcess, "spawnSync");
+  const spawnMock = vi.spyOn(childProcess, "spawn").mockImplementation(
+    () =>
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      ({
+        on: (event: string, listener: (...args: any[]) => void) => {
+          if (event === "close") listener(0);
+        },
+        kill: () => {
+          // do nothing
+        },
+      }) as childProcess.ChildProcess,
+  );
   const cwd = process.cwd();
   beforeEach(() => {
-    spawnSyncMock.mockClear();
+    spawnMock.mockClear();
     process.chdir(cwd);
   });
 
@@ -43,10 +53,10 @@ describe("main", () => {
     await fs.rm(tmpDir, { recursive: true });
   });
 
-  it("should cause error in a directory without package.json", () => {
+  it("should cause error in a directory without package.json", async () => {
     process.chdir(process.env["HOME"] ?? "/");
     const result = main({});
-    expect(result).rejects.toThrowError(/^No package.json found\.$/);
+    await expect(result).rejects.toThrowError(/^No package.json found\.$/);
   });
 
   it("should detect by packageManager field", async () => {
@@ -59,9 +69,6 @@ describe("main", () => {
       }),
       "utf8",
     );
-    spawnSyncMock.mockReturnValue({
-      status: 0,
-    } as childProcess.SpawnSyncReturns<Buffer>);
     process.argv = ["node", "main.js", "--help"];
 
     const status = await main({
@@ -72,8 +79,8 @@ describe("main", () => {
     });
 
     expect(status).toBe(0);
-    expect(childProcess.spawnSync).toHaveBeenCalled();
-    expect(childProcess.spawnSync).toBeCalledWith(
+    expect(childProcess.spawn).toHaveBeenCalled();
+    expect(childProcess.spawn).toBeCalledWith(
       path.resolve(
         createRequire(import.meta.url).resolve("corepack/package.json"),
         "..",
@@ -100,9 +107,6 @@ describe("main", () => {
       }),
       "utf8",
     );
-    spawnSyncMock.mockReturnValue({
-      status: 0,
-    } as childProcess.SpawnSyncReturns<Buffer>);
     process.argv = ["node", "main.js", "--help"];
 
     const status = await main({
@@ -113,8 +117,8 @@ describe("main", () => {
     });
 
     expect(status).toBe(0);
-    expect(childProcess.spawnSync).toHaveBeenCalled();
-    expect(childProcess.spawnSync).toBeCalledWith(
+    expect(childProcess.spawn).toHaveBeenCalled();
+    expect(childProcess.spawn).toBeCalledWith(
       path.resolve(
         createRequire(import.meta.url).resolve("corepack/package.json"),
         "..",
@@ -136,9 +140,6 @@ describe("main", () => {
       }),
       "utf8",
     );
-    spawnSyncMock.mockReturnValue({
-      status: 0,
-    } as childProcess.SpawnSyncReturns<Buffer>);
     process.argv = ["node", "main.js", "--help"];
 
     const status = await main({
@@ -149,8 +150,8 @@ describe("main", () => {
     });
 
     expect(status).toBe(0);
-    expect(childProcess.spawnSync).toHaveBeenCalled();
-    expect(childProcess.spawnSync).toBeCalledWith(
+    expect(childProcess.spawn).toHaveBeenCalled();
+    expect(childProcess.spawn).toBeCalledWith(
       path.resolve(
         createRequire(import.meta.url).resolve("corepack/package.json"),
         "..",
@@ -179,9 +180,6 @@ describe("main", () => {
     );
 
     process.chdir(path.join(tmpDir, "detect-by-package-json", "nested"));
-    spawnSyncMock.mockReturnValue({
-      status: 0,
-    } as childProcess.SpawnSyncReturns<Buffer>);
     process.argv = ["node", "main.js", "--help"];
 
     const status = await main({
@@ -191,8 +189,8 @@ describe("main", () => {
       },
     });
     expect(status).toBe(0);
-    expect(childProcess.spawnSync).toHaveBeenCalled();
-    expect(childProcess.spawnSync).toBeCalledWith(
+    expect(childProcess.spawn).toHaveBeenCalled();
+    expect(childProcess.spawn).toBeCalledWith(
       path.resolve(
         createRequire(import.meta.url).resolve("corepack/package.json"),
         "..",
@@ -209,9 +207,6 @@ describe("main", () => {
     process.chdir(path.join(tmpDir, "detect-by-lock-file"));
     await fs.writeFile("package.json", JSON.stringify({}), "utf8");
     await fs.writeFile("yarn.lock", "", "utf8");
-    spawnSyncMock.mockReturnValue({
-      status: 0,
-    } as childProcess.SpawnSyncReturns<Buffer>);
     process.argv = ["node", "main.js", "--help"];
 
     const status = await main({
@@ -222,8 +217,8 @@ describe("main", () => {
     });
 
     expect(status).toBe(0);
-    expect(childProcess.spawnSync).toHaveBeenCalled();
-    expect(childProcess.spawnSync).toBeCalledWith(
+    expect(childProcess.spawn).toHaveBeenCalled();
+    expect(childProcess.spawn).toBeCalledWith(
       path.resolve(
         createRequire(import.meta.url).resolve("corepack/package.json"),
         "..",
@@ -243,26 +238,20 @@ describe("main", () => {
     await fs.writeFile("yarn.lock", "", "utf8");
     await fs.writeFile(path.join("..", "package-lock.json"), "", "utf8");
 
-    spawnSyncMock.mockReturnValue({
-      status: 0,
-    } as childProcess.SpawnSyncReturns<Buffer>);
     process.argv = ["node", "main.js", "--help"];
 
     const result = main({});
 
-    expect(result).rejects.toThrowError(
+    await expect(result).rejects.toThrowError(
       /^Multiple lock files found. Please remove one of them\.$/,
     );
-    expect(childProcess.spawnSync).toHaveBeenCalledTimes(0);
+    expect(childProcess.spawn).toHaveBeenCalledTimes(0);
   });
 
   it("should detect and fallback to npm", async () => {
     await fs.mkdir(path.join(tmpDir, "detect-and-fallback"));
     process.chdir(path.join(tmpDir, "detect-and-fallback"));
     await fs.writeFile("package.json", JSON.stringify({}), "utf8");
-    spawnSyncMock.mockReturnValue({
-      status: 0,
-    } as childProcess.SpawnSyncReturns<Buffer>);
     process.argv = ["node", "main.js", "--help"];
 
     const status = await main({
@@ -272,8 +261,8 @@ describe("main", () => {
     });
 
     expect(status).toBe(0);
-    expect(childProcess.spawnSync).toHaveBeenCalled();
-    expect(childProcess.spawnSync).toBeCalledWith(
+    expect(childProcess.spawn).toHaveBeenCalled();
+    expect(childProcess.spawn).toBeCalledWith(
       path.resolve(
         createRequire(import.meta.url).resolve("corepack/package.json"),
         "..",
@@ -286,9 +275,6 @@ describe("main", () => {
   });
 
   it("should detect pnpm in current project", async () => {
-    spawnSyncMock.mockReturnValue({
-      status: 1,
-    } as childProcess.SpawnSyncReturns<Buffer>);
     process.argv = ["node", "main.js", "--help"];
 
     const status = await main({
@@ -297,9 +283,9 @@ describe("main", () => {
       },
     });
 
-    expect(status).toBe(1);
-    expect(childProcess.spawnSync).toHaveBeenCalled();
-    expect(childProcess.spawnSync).toBeCalledWith(
+    expect(status).toBe(0);
+    expect(childProcess.spawn).toHaveBeenCalled();
+    expect(childProcess.spawn).toBeCalledWith(
       path.resolve(
         createRequire(import.meta.url).resolve("corepack/package.json"),
         "..",
