@@ -4,5 +4,5 @@
   "initialVersions": {
     "@rnm/pm": "0.1.4"
   },
-  "changesets": ["full-sloths-deny", "gold-shirts-greet"]
+  "changesets": ["free-meals-read", "full-sloths-deny", "gold-shirts-greet"]
 }
