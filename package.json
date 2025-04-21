@@ -8,7 +8,7 @@
     "build": "pm -r build",
     "install": "pm build",
     "prepare": "fenge install",
-    "release": "pm -r publish",
+    "release": "pm -r --no-git-checks publish --tag $([ -f .changeset/pre.json ] && jq -r '.tag' .changeset/pre.json || echo 'latest')",
     "style": "fenge",
     "style:update": "fenge -u",
     "test": "pm style && pm -r test"
