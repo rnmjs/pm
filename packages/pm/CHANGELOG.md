@@ -1,5 +1,12 @@
 # @rnm/pm
 
+## 0.1.5
+
+### Patch Changes
+
+- eaf25a1: chore: upgrade deps
+- 30ca599: fix: should not be killed if child process is still running
+
 ## 0.1.4
 
 ### Patch Changes
