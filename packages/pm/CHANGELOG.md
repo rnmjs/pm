@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.1.5-beta.1
+
+### Patch Changes
+
+- 28a6ec2: chore: fix release tag
+
 ## 0.1.5-beta.0
 
 ### Patch Changes
