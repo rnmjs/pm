@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.2.0
+
+### Minor Changes
+
+- cdebcff: feat: ignore `COREPACK_*` env variables and does not read `.corepack.env` files
+
 ## 0.1.5
 
 ### Patch Changes
