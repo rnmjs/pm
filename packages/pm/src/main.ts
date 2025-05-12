@@ -147,9 +147,14 @@ export async function main({
     {
       stdio: "inherit",
       env: {
+        COREPACK_ENV_FILE: "0",
         COREPACK_ENABLE_AUTO_PIN: "0", // TODO: Remove this env when the default is 0; Refer: https://github.com/nodejs/corepack/issues/485.
         COREPACK_NPM_REGISTRY: getRegistry(), // TODO: Remove this env when https://github.com/nodejs/corepack/issues/540 is resolved.
-        ...process.env,
+        ...Object.fromEntries(
+          Object.entries(process.env).filter(
+            ([k]) => !k.startsWith("COREPACK_"),
+          ),
+        ),
       },
     },
   );

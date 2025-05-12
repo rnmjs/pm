@@ -98,13 +98,18 @@ pm run dev
 
 > Note: Always use `@rnm/pm` within a project that contains a `package.json`. Running `pm` outside a project will fail.
 
+## Differences from Corepack
+
+1. `@rnm/pm` detects lock files (`package-lock.json`, `yarn.lock`, or `pnpm-lock.yaml`) and uses the corresponding package manager, while `corepack` does not.
+2. `@rnm/pm` ignore environment variables starting with `COREPACK_` prefix, which means it is not configurable, while `corepack` does.
+3. `@rnm/pm` does not consult `.corepack.env`, while `corepack` does.
+
 ## Migration from Corepack
 
 1. (Optional) If Corepack has enabled npm, disable it by running `npm i npm -g` to restore the default behavior.
-2. (Optional) Remove [Corepack environment variables](https://github.com/nodejs/corepack?tab=readme-ov-file#environment-variables) in `~/.zshrc` or `~/.bashrc`.
-3. Run `corepack disable yarn pnpm` to disable Corepack.
-4. Install `@rnm/pm` globally.
-5. Replace `npm`, `yarn`, and `pnpm` with `pm` in your projects.
+2. Run `corepack disable yarn pnpm` to disable Corepack.
+3. Install `@rnm/pm` globally.
+4. Replace `npm`, `yarn`, and `pnpm` with `pm` in your projects.
 
 ## Show your support
 

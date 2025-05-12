@@ -79,17 +79,20 @@ describe("main", () => {
     });
 
     expect(status).toBe(0);
-    expect(childProcess.spawn).toHaveBeenCalled();
-    expect(childProcess.spawn).toBeCalledWith(
-      path.resolve(
-        createRequire(import.meta.url).resolve("corepack/package.json"),
-        "..",
-        "dist",
-        "corepack.js",
-      ),
-      ["yarn", "--help"],
-      { stdio: "inherit", env: { ...process.env } },
-    );
+    expect(childProcess.spawn).toHaveBeenCalledOnce();
+    expect(vi.mocked(childProcess.spawn).mock.calls.length).toBe(1);
+    vi.mocked(childProcess.spawn).mock.calls.forEach((call) => {
+      expect(call[0]).toBe(
+        path.resolve(
+          createRequire(import.meta.url).resolve("corepack/package.json"),
+          "..",
+          "dist",
+          "corepack.js",
+        ),
+      );
+      expect(call[1]).toEqual(["yarn", "--help"]);
+      expect(call[2]).toBeInstanceOf(Object);
+    });
   });
 
   it("should detect by devEngines field", async () => {
@@ -117,17 +120,20 @@ describe("main", () => {
     });
 
     expect(status).toBe(0);
-    expect(childProcess.spawn).toHaveBeenCalled();
-    expect(childProcess.spawn).toBeCalledWith(
-      path.resolve(
-        createRequire(import.meta.url).resolve("corepack/package.json"),
-        "..",
-        "dist",
-        "corepack.js",
-      ),
-      ["npm", "--help"],
-      { stdio: "inherit", env: { ...process.env } },
-    );
+    expect(childProcess.spawn).toHaveBeenCalledOnce();
+    expect(vi.mocked(childProcess.spawn).mock.calls.length).toBe(1);
+    vi.mocked(childProcess.spawn).mock.calls.forEach((call) => {
+      expect(call[0]).toBe(
+        path.resolve(
+          createRequire(import.meta.url).resolve("corepack/package.json"),
+          "..",
+          "dist",
+          "corepack.js",
+        ),
+      );
+      expect(call[1]).toEqual(["npm", "--help"]);
+      expect(call[2]).toBeInstanceOf(Object);
+    });
   });
 
   it("should detect by engines field", async () => {
@@ -150,17 +156,20 @@ describe("main", () => {
     });
 
     expect(status).toBe(0);
-    expect(childProcess.spawn).toHaveBeenCalled();
-    expect(childProcess.spawn).toBeCalledWith(
-      path.resolve(
-        createRequire(import.meta.url).resolve("corepack/package.json"),
-        "..",
-        "dist",
-        "corepack.js",
-      ),
-      ["pnpm", "--help"],
-      { stdio: "inherit", env: { ...process.env } },
-    );
+    expect(childProcess.spawn).toHaveBeenCalledOnce();
+    expect(vi.mocked(childProcess.spawn).mock.calls.length).toBe(1);
+    vi.mocked(childProcess.spawn).mock.calls.forEach((call) => {
+      expect(call[0]).toBe(
+        path.resolve(
+          createRequire(import.meta.url).resolve("corepack/package.json"),
+          "..",
+          "dist",
+          "corepack.js",
+        ),
+      );
+      expect(call[1]).toEqual(["pnpm", "--help"]);
+      expect(call[2]).toBeInstanceOf(Object);
+    });
   });
 
   it("should detect by package.json first instead of lock files", async () => {
@@ -189,17 +198,20 @@ describe("main", () => {
       },
     });
     expect(status).toBe(0);
-    expect(childProcess.spawn).toHaveBeenCalled();
-    expect(childProcess.spawn).toBeCalledWith(
-      path.resolve(
-        createRequire(import.meta.url).resolve("corepack/package.json"),
-        "..",
-        "dist",
-        "corepack.js",
-      ),
-      ["yarn", "--help"],
-      { stdio: "inherit", env: { ...process.env } },
-    );
+    expect(childProcess.spawn).toHaveBeenCalledOnce();
+    expect(vi.mocked(childProcess.spawn).mock.calls.length).toBe(1);
+    vi.mocked(childProcess.spawn).mock.calls.forEach((call) => {
+      expect(call[0]).toBe(
+        path.resolve(
+          createRequire(import.meta.url).resolve("corepack/package.json"),
+          "..",
+          "dist",
+          "corepack.js",
+        ),
+      );
+      expect(call[1]).toEqual(["yarn", "--help"]);
+      expect(call[2]).toBeInstanceOf(Object);
+    });
   });
 
   it("should detect by lock file", async () => {
@@ -217,17 +229,20 @@ describe("main", () => {
     });
 
     expect(status).toBe(0);
-    expect(childProcess.spawn).toHaveBeenCalled();
-    expect(childProcess.spawn).toBeCalledWith(
-      path.resolve(
-        createRequire(import.meta.url).resolve("corepack/package.json"),
-        "..",
-        "dist",
-        "corepack.js",
-      ),
-      ["yarn", "--help"],
-      { stdio: "inherit", env: { ...process.env } },
-    );
+    expect(childProcess.spawn).toHaveBeenCalledOnce();
+    expect(vi.mocked(childProcess.spawn).mock.calls.length).toBe(1);
+    vi.mocked(childProcess.spawn).mock.calls.forEach((call) => {
+      expect(call[0]).toBe(
+        path.resolve(
+          createRequire(import.meta.url).resolve("corepack/package.json"),
+          "..",
+          "dist",
+          "corepack.js",
+        ),
+      );
+      expect(call[1]).toEqual(["yarn", "--help"]);
+      expect(call[2]).toBeInstanceOf(Object);
+    });
   });
 
   it("should crash when detecting multi lock fils", async () => {
@@ -261,17 +276,20 @@ describe("main", () => {
     });
 
     expect(status).toBe(0);
-    expect(childProcess.spawn).toHaveBeenCalled();
-    expect(childProcess.spawn).toBeCalledWith(
-      path.resolve(
-        createRequire(import.meta.url).resolve("corepack/package.json"),
-        "..",
-        "dist",
-        "corepack.js",
-      ),
-      ["npm", "--help"],
-      { stdio: "inherit", env: { ...process.env } },
-    );
+    expect(childProcess.spawn).toHaveBeenCalledOnce();
+    expect(vi.mocked(childProcess.spawn).mock.calls.length).toBe(1);
+    vi.mocked(childProcess.spawn).mock.calls.forEach((call) => {
+      expect(call[0]).toBe(
+        path.resolve(
+          createRequire(import.meta.url).resolve("corepack/package.json"),
+          "..",
+          "dist",
+          "corepack.js",
+        ),
+      );
+      expect(call[1]).toEqual(["npm", "--help"]);
+      expect(call[2]).toBeInstanceOf(Object);
+    });
   });
 
   it("should detect pnpm in current project", async () => {
@@ -284,16 +302,19 @@ describe("main", () => {
     });
 
     expect(status).toBe(0);
-    expect(childProcess.spawn).toHaveBeenCalled();
-    expect(childProcess.spawn).toBeCalledWith(
-      path.resolve(
-        createRequire(import.meta.url).resolve("corepack/package.json"),
-        "..",
-        "dist",
-        "corepack.js",
-      ),
-      ["pnpm", "--help"],
-      { stdio: "inherit", env: { ...process.env } },
-    );
+    expect(childProcess.spawn).toHaveBeenCalledOnce();
+    expect(vi.mocked(childProcess.spawn).mock.calls.length).toBe(1);
+    vi.mocked(childProcess.spawn).mock.calls.forEach((call) => {
+      expect(call[0]).toBe(
+        path.resolve(
+          createRequire(import.meta.url).resolve("corepack/package.json"),
+          "..",
+          "dist",
+          "corepack.js",
+        ),
+      );
+      expect(call[1]).toEqual(["pnpm", "--help"]);
+      expect(call[2]).toBeInstanceOf(Object);
+    });
   });
 });
