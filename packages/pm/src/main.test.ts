@@ -90,7 +90,7 @@ describe("main", () => {
           "corepack.js",
         ),
       );
-      expect(call[1]).toEqual(["yarn", "--help"]);
+      expect(call[1]).toEqual(["yarn@1.1.1", "--help"]);
       expect(call[2]).toBeInstanceOf(Object);
     });
   });
@@ -131,7 +131,7 @@ describe("main", () => {
           "corepack.js",
         ),
       );
-      expect(call[1]).toEqual(["npm", "--help"]);
+      expect(call[1]).toEqual(["npm@1.2.3", "--help"]);
       expect(call[2]).toBeInstanceOf(Object);
     });
   });
@@ -209,7 +209,7 @@ describe("main", () => {
           "corepack.js",
         ),
       );
-      expect(call[1]).toEqual(["yarn", "--help"]);
+      expect(call[1]).toEqual(["yarn@1.10.0", "--help"]);
       expect(call[2]).toBeInstanceOf(Object);
     });
   });
@@ -313,7 +313,7 @@ describe("main", () => {
           "corepack.js",
         ),
       );
-      expect(call[1]).toEqual(["pnpm", "--help"]);
+      expect(call[1]).toEqual(["pnpm@10.10.0", "--help"]);
       expect(call[2]).toBeInstanceOf(Object);
     });
   });

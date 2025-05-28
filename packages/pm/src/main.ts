@@ -135,15 +135,17 @@ export async function main({
   onDetected?: (pm: DetectResult | undefined) => void;
 }): Promise<number> {
   let packageManager = forceTo;
+  let version = "";
   if (!packageManager) {
     const detectResult = await detect();
     onDetected?.(detectResult);
     packageManager = detectResult?.name ?? "npm";
+    if (detectResult?.version) version = `@${detectResult.version}`;
   }
 
   const cp = childProcess.spawn(
     getCorepackPath(),
-    [packageManager, ...process.argv.slice(2)],
+    [`${packageManager}${version}`, ...process.argv.slice(2)],
     {
       stdio: "inherit",
       env: {
