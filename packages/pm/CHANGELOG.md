@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.2.1
+
+### Patch Changes
+
+- bd9ed4a: feat: pass version to corepack command
+
 ## 0.2.0
 
 ### Minor Changes
