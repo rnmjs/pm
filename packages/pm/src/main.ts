@@ -67,8 +67,7 @@ async function detectByPackageJson(
   }
 
   // 3. detect pm by `engines` filed
-  // Note: Corepack does not support `engines` field. So the result doesn't include the version.
-  // TODO: Trace https://github.com/nodejs/corepack/issues/694.
+  // Note: Corepack does not support `engines` field. So the result doesn't include the version. See https://github.com/nodejs/corepack/issues/694.
   if (pkgJsonContent?.engines?.["npm"]) return { name: "npm" };
   if (pkgJsonContent?.engines?.["yarn"]) return { name: "yarn" };
   if (pkgJsonContent?.engines?.["pnpm"]) return { name: "pnpm" };
@@ -150,7 +149,6 @@ export async function main({
       stdio: "inherit",
       env: {
         COREPACK_ENV_FILE: "0",
-        COREPACK_ENABLE_AUTO_PIN: "0", // TODO: Remove this env when the default is 0; Refer: https://github.com/nodejs/corepack/issues/485.
         COREPACK_NPM_REGISTRY: getRegistry(), // TODO: Remove this env when https://github.com/nodejs/corepack/issues/540 is resolved.
         ...Object.fromEntries(
           Object.entries(process.env).filter(
