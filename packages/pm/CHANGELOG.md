@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.2.2
+
+### Patch Changes
+
+- b18bacc: chore: upgrade corepack
+
 ## 0.2.1
 
 ### Patch Changes
