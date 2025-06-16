@@ -15,7 +15,7 @@ const status = await main({
       ? styleText("green", version)
       : styleText("red", "unknown");
     const nameVer = styleText("bold", `${name ?? "npm"}@${styledVersion}`);
-    console.log(`💼 Using ${nameVer} (${name ? "detected" : "fallback"})`);
+    console.log(`📦 Using ${nameVer} (${name ? "detected" : "fallback"})`);
   },
 });
 process.exit(status);
