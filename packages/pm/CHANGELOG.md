@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.2.3
+
+### Patch Changes
+
+- 09cbb1f: chore: 💼 to 📦
+
 ## 0.2.2
 
 ### Patch Changes
