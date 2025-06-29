@@ -14,9 +14,9 @@
     "test": "pm style && pm -r test"
   },
   "devDependencies": {
-    "@changesets/cli": "2.29.4",
+    "@changesets/cli": "2.29.5",
     "@rnm/pm": "workspace:*",
-    "fenge": "0.8.5",
+    "fenge": "0.9.3",
     "typescript": "5.8.3"
   },
   "engines": {
