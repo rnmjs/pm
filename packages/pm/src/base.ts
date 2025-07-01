@@ -4,6 +4,9 @@ import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
+// TODO: Use named import if we drop support for Node.js <= 18
+// eslint-disable-next-line unicorn/import-style
+import util from "node:util";
 import corepackPkgJson from "corepack/package.json" with { type: "json" };
 import registryUrl from "registry-url";
 import { importMetaResolve } from "./import-meta-resolve.ts";
@@ -127,9 +130,10 @@ function getRegistry() {
 }
 
 export async function run(
-  { name, version }: DetectResult,
+  detectResult: DetectResult | undefined,
   args: string[],
 ): Promise<number> {
+  const { name = "npm", version } = detectResult ?? {};
   const cp = childProcess.spawn(
     getCorepackPath(),
     [`${name}${version ? `@${version}` : ""}`, ...args],
@@ -161,4 +165,21 @@ export async function run(
       );
     });
   });
+}
+
+export function getMsg(detectResult: DetectResult | undefined, args: string[]) {
+  const st =
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    util.styleText ?? ((_color: string | string[], text: string) => text);
+  const name = detectResult?.name ?? "npm";
+  const version = detectResult?.version ?? "unknown";
+  const nameVer = `[${name}@${version}]`;
+  const info = detectResult ? "(detected)" : "(fallback)";
+
+  return [
+    "📦",
+    `${st("bold", nameVer)}${st("dim", info)}`,
+    "➜",
+    st("blue", [name, ...args].join(" ")),
+  ].join(" ");
 }

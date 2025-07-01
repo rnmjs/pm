@@ -2,6 +2,6 @@
 // This command is used to improve compatibility.
 // It is generally not recommended to use this command.
 import process from "node:process";
-import { main } from "./main.ts";
+import { run } from "./base.ts";
 
-process.exit(await main({ forceTo: "yarn" }));
+await run({ name: "yarn" }, process.argv.slice(2));
