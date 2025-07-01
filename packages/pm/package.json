@@ -21,6 +21,7 @@
   "bin": {
     "pm": "./dist/pm.cli.js",
     "pnpm": "./dist/pnpm.cli.js",
+    "px": "./dist/px.cli.js",
     "yarn": "./dist/yarn.cli.js"
   },
   "files": [
