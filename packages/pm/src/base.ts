@@ -124,11 +124,6 @@ function getCorepackPath(): string {
   );
 }
 
-function getRegistry() {
-  const registry = registryUrl();
-  return registry.endsWith("/") ? registry.slice(0, -1) : registry;
-}
-
 export async function run(
   detectResult: DetectResult | undefined,
   args: string[],
@@ -141,7 +136,7 @@ export async function run(
       stdio: "inherit",
       env: {
         COREPACK_ENV_FILE: "0",
-        COREPACK_NPM_REGISTRY: getRegistry(), // TODO: Remove this env when https://github.com/nodejs/corepack/issues/540 is resolved.
+        COREPACK_NPM_REGISTRY: registryUrl().replace(/\/$/, ""), // TODO: Remove this env when https://github.com/nodejs/corepack/issues/540 is resolved.
         ...Object.fromEntries(
           Object.entries(process.env).filter(
             ([k]) => !k.startsWith("COREPACK_"),

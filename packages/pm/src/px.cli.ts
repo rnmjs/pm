@@ -3,7 +3,6 @@ import process from "node:process";
 import { detect, getMsg, run } from "./base.ts";
 
 const result = await detect();
-
 const args = [
   ...(result?.name === "pnpm" || result?.name === "yarn"
     ? ["dlx"]

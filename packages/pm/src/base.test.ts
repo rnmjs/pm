@@ -13,7 +13,7 @@ import {
   it,
   vi,
 } from "vitest";
-import { main } from "./main.ts";
+import { detect, run } from "./base.ts";
 
 // This is needed because vitest does not support import.meta.resolve.
 // When vitest supports import.meta.resolve, this mock can be removed.
@@ -55,7 +55,7 @@ describe("main", () => {
 
   it("should cause error in a directory without package.json", async () => {
     process.chdir(process.env["HOME"] ?? "/");
-    const result = main({});
+    const result = detect();
     await expect(result).rejects.toThrowError(/^No package.json found\.$/);
   });
 
@@ -71,12 +71,10 @@ describe("main", () => {
     );
     process.argv = ["node", "main.js", "--help"];
 
-    const status = await main({
-      onDetected: (detected) => {
-        expect(detected?.name).toBe("yarn");
-        expect(detected?.version).toBe("1.1.1");
-      },
-    });
+    const detected = await detect();
+    expect(detected?.name).toBe("yarn");
+    expect(detected?.version).toBe("1.1.1");
+    const status = await run(detected, process.argv.slice(2));
 
     expect(status).toBe(0);
     expect(childProcess.spawn).toHaveBeenCalledOnce();
@@ -112,12 +110,10 @@ describe("main", () => {
     );
     process.argv = ["node", "main.js", "--help"];
 
-    const status = await main({
-      onDetected: (detected) => {
-        expect(detected?.name).toBe("npm");
-        expect(detected?.version).toBe("1.2.3");
-      },
-    });
+    const detected = await detect();
+    expect(detected?.name).toBe("npm");
+    expect(detected?.version).toBe("1.2.3");
+    const status = await run(detected, process.argv.slice(2));
 
     expect(status).toBe(0);
     expect(childProcess.spawn).toHaveBeenCalledOnce();
@@ -148,12 +144,10 @@ describe("main", () => {
     );
     process.argv = ["node", "main.js", "--help"];
 
-    const status = await main({
-      onDetected: (detected) => {
-        expect(detected?.name).toBe("pnpm");
-        expect(detected?.version).toBeUndefined();
-      },
-    });
+    const detected = await detect();
+    expect(detected?.name).toBe("pnpm");
+    expect(detected?.version).toBeUndefined();
+    const status = await run(detected, process.argv.slice(2));
 
     expect(status).toBe(0);
     expect(childProcess.spawn).toHaveBeenCalledOnce();
@@ -191,12 +185,11 @@ describe("main", () => {
     process.chdir(path.join(tmpDir, "detect-by-package-json", "nested"));
     process.argv = ["node", "main.js", "--help"];
 
-    const status = await main({
-      onDetected: (detected) => {
-        expect(detected?.name).toBe("yarn");
-        expect(detected?.version).toBe("1.10.0");
-      },
-    });
+    const detected = await detect();
+    expect(detected?.name).toBe("yarn");
+    expect(detected?.version).toBe("1.10.0");
+    const status = await run(detected, process.argv.slice(2));
+
     expect(status).toBe(0);
     expect(childProcess.spawn).toHaveBeenCalledOnce();
     expect(vi.mocked(childProcess.spawn).mock.calls.length).toBe(1);
@@ -221,12 +214,10 @@ describe("main", () => {
     await fs.writeFile("yarn.lock", "", "utf8");
     process.argv = ["node", "main.js", "--help"];
 
-    const status = await main({
-      onDetected: (detected) => {
-        expect(detected?.name).toBe("yarn");
-        expect(detected?.version).toBeUndefined();
-      },
-    });
+    const detected = await detect();
+    expect(detected?.name).toBe("yarn");
+    expect(detected?.version).toBeUndefined();
+    const status = await run(detected, process.argv.slice(2));
 
     expect(status).toBe(0);
     expect(childProcess.spawn).toHaveBeenCalledOnce();
@@ -255,7 +246,7 @@ describe("main", () => {
 
     process.argv = ["node", "main.js", "--help"];
 
-    const result = main({});
+    const result = detect();
 
     await expect(result).rejects.toThrowError(
       /^Multiple lock files found. Please remove one of them\.$/,
@@ -269,11 +260,9 @@ describe("main", () => {
     await fs.writeFile("package.json", JSON.stringify({}), "utf8");
     process.argv = ["node", "main.js", "--help"];
 
-    const status = await main({
-      onDetected: (detected) => {
-        expect(detected).toBeUndefined();
-      },
-    });
+    const detected = await detect();
+    expect(detected).toBeUndefined();
+    const status = await run(detected, process.argv.slice(2));
 
     expect(status).toBe(0);
     expect(childProcess.spawn).toHaveBeenCalledOnce();
@@ -295,11 +284,9 @@ describe("main", () => {
   it("should detect pnpm in current project", async () => {
     process.argv = ["node", "main.js", "--help"];
 
-    const status = await main({
-      onDetected: (detected) => {
-        expect(detected?.name).toBe("pnpm");
-      },
-    });
+    const detected = await detect();
+    expect(detected?.name).toBe("pnpm");
+    const status = await run(detected, process.argv.slice(2));
 
     expect(status).toBe(0);
     expect(childProcess.spawn).toHaveBeenCalledOnce();
