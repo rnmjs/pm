@@ -2,9 +2,7 @@
 import { Builder } from "fenge/eslint-config";
 
 export default new Builder()
-  .enableJavaScript()
-  .enableTypeScript()
-  .enablePackageJson()
+  .enableAll()
   .append({
     rules: {
       "pkg-json/compatible-engines-node-version": "off",

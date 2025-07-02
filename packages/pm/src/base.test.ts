@@ -55,8 +55,8 @@ describe("main", () => {
 
   it("should cause error in a directory without package.json", async () => {
     process.chdir(process.env["HOME"] ?? "/");
-    const result = detect();
-    await expect(result).rejects.toThrowError(/^No package.json found\.$/);
+    const result = await detect();
+    expect(result).toBeUndefined();
   });
 
   it("should detect by packageManager field", async () => {

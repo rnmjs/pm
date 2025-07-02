@@ -96,8 +96,6 @@ pm run dev
 # pnpm run dev
 ```
 
-> Note: Always use `@rnm/pm` within a project that contains a `package.json`. Running `pm` outside a project will fail.
-
 ## Differences from Corepack
 
 1. `@rnm/pm` detects lock files (`package-lock.json`, `yarn.lock`, or `pnpm-lock.yaml`) and uses the corresponding package manager, while `corepack` does not.

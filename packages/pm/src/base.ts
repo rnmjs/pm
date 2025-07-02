@@ -88,7 +88,10 @@ export async function detect(
   directory = process.cwd(),
 ): Promise<DetectResult | undefined> {
   const pkgJsonPath = await findUp("package.json", { cwd: directory });
-  if (!pkgJsonPath) throw new Error("No package.json found.");
+  if (!pkgJsonPath) {
+    // throw new Error("No package.json found.");
+    return undefined;
+  }
 
   // 1. detect pm by package.json
   const pm = await detectByPackageJson(path.dirname(pkgJsonPath));
