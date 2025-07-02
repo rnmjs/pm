@@ -1,5 +1,13 @@
 # @rnm/pm
 
+## 0.2.4
+
+### Patch Changes
+
+- 342ccc4: feat: optimize the printing message
+- 3226646: feat: allow running `pm` outside of a project
+- 4e0f6a9: feat: add `px` command
+
 ## 0.2.3
 
 ### Patch Changes
