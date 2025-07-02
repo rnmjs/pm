@@ -4,4 +4,4 @@
 import process from "node:process";
 import { run } from "./base.ts";
 
-await run({ name: "pnpm" }, process.argv.slice(2));
+process.exit(await run({ name: "pnpm" }, process.argv.slice(2)));

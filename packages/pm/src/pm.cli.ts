@@ -6,4 +6,4 @@ const result = await detect();
 const args = process.argv.slice(2);
 const msg = getMsg(result, args);
 console.log(msg);
-await run(result, args);
+process.exit(await run(result, args));

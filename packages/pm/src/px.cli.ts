@@ -11,4 +11,4 @@ const args = [
 ];
 const msg = getMsg(result, args);
 console.log(msg);
-await run(result, args);
+process.exit(await run(result, args));
