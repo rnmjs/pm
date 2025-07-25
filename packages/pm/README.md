@@ -68,9 +68,28 @@ npm install -g @rnm/pm
 
 ## Usage
 
-`pm` detects the appropriate package manager via the [packageManager](https://nodejs.org/api/packages.html#packagemanager) and [devEngines.packageManager](https://docs.npmjs.com/cli/v11/configuring-npm/package-json#devengines) fields in the nearest `package.json`. If these fields are absent, `pm` looks for the nearest lock file (`package-lock.json`, `yarn.lock`, or `pnpm-lock.yaml`) and uses the corresponding package manager. If no package manager is detected, `pm` falls back to npm.
+`pm` detects the appropriate package manager via the [packageManager](https://github.com/nodejs/corepack?tab=readme-ov-file#when-authoring-packages) and [devEngines.packageManager](https://docs.npmjs.com/cli/v11/configuring-npm/package-json#devengines) fields in the nearest `package.json`. If these fields are absent, `pm` looks for the nearest lock file (`package-lock.json`, `yarn.lock`, or `pnpm-lock.yaml`) and uses the corresponding package manager. If no package manager is detected, `pm` falls back to npm.
 
-Calling `pm` is equivalent to calling the detected package manager. Any arguments passed to `pm` will be forwarded to the detected package manager.
+Therefore, config a `packageManager` or a `devEngines.packageManager` filed in root `package.json` is recommended.
+
+```json
+{
+  "packageManager": "pnpm@10.0.0"
+}
+```
+
+```json
+{
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "10.0.0"
+    }
+  }
+}
+```
+
+Then, calling `pm` is equivalent to calling the detected package manager. Any arguments passed to `pm` will be forwarded to the detected package manager.
 
 ```bash
 pm --help
