@@ -32,12 +32,12 @@
     "test": "vitest run --coverage --coverage.reporter=json-summary --coverage.reporter=html && make-coverage-badge --output-path badge/coverage.svg"
   },
   "dependencies": {
-    "chalk": "5.4.1",
+    "chalk": "5.6.0",
     "corepack": "0.33.0",
     "registry-url": "7.2.0"
   },
   "devDependencies": {
-    "@types/node": "18.19.120",
+    "@types/node": "18.19.123",
     "@vitest/coverage-v8": "3.2.4",
     "make-coverage-badge": "1.2.0",
     "vitest": "3.2.4"

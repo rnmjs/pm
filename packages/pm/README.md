@@ -117,9 +117,11 @@ pm run dev
 
 ## Differences from Corepack
 
-1. `@rnm/pm` detects lock files (`package-lock.json`, `yarn.lock`, or `pnpm-lock.yaml`) and uses the corresponding package manager, while `corepack` does not.
-2. `@rnm/pm` ignore environment variables starting with `COREPACK_` prefix, which means it is not configurable, while `corepack` does.
-3. `@rnm/pm` does not consult `.corepack.env`, while `corepack` does.
+1. `@rnm/pm` detects `packageManager`, `devEngines`, and `engines` fields in `package.json` to use correct package manager, while `corepack` only supports `packageManager` and `devEngines` fields.
+2. `@rnm/pm` detects lock files (`package-lock.json`, `yarn.lock`, or `pnpm-lock.yaml`) and uses the corresponding package manager, while `corepack` does not.
+3. `@rnm/pm` ignore environment variables starting with `COREPACK_` prefix, which means it is not configurable, while `corepack` does.
+4. `@rnm/pm` ignore `.corepack.env` file, while `corepack` consult it.
+5. `@rnm/pm` automatically use the result of `$(npm config get registry)` as its registry to install packages, while `corepack` use the environment variable `COREPACK_NPM_REGISTRY` as its registry.
 
 ## Migration from Corepack
 

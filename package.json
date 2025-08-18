@@ -14,10 +14,10 @@
     "test": "pm style && pm -r test"
   },
   "devDependencies": {
-    "@changesets/cli": "2.29.5",
+    "@changesets/cli": "2.29.6",
     "@rnm/pm": "workspace:*",
-    "fenge": "0.9.8",
-    "typescript": "5.8.3"
+    "fenge": "0.9.10",
+    "typescript": "5.9.2"
   },
   "engines": {
     "node": ">=22.14.0"
