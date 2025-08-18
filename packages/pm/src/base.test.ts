@@ -26,7 +26,7 @@ vi.mock("./import-meta-resolve.ts", () => ({
     ),
 }));
 
-describe("main", () => {
+describe("base", () => {
   const spawnMock = vi.spyOn(childProcess, "spawn").mockImplementation(
     () =>
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
