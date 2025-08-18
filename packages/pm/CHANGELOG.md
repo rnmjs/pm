@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.2.5
+
+### Patch Changes
+
+- a310a41: chore: upgrade deps
+
 ## 0.2.4
 
 ### Patch Changes
