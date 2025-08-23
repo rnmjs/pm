@@ -19,10 +19,9 @@
   "author": "hellozmj@qq.com",
   "type": "module",
   "bin": {
+    "enable-pm-shim": "./dist/enable-pm-shim.cli.js",
     "pm": "./dist/pm.cli.js",
-    "pnpm": "./dist/pnpm.cli.js",
-    "px": "./dist/px.cli.js",
-    "yarn": "./dist/yarn.cli.js"
+    "px": "./dist/px.cli.js"
   },
   "files": [
     "dist"

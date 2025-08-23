@@ -16,6 +16,12 @@ export interface DetectResult {
   version?: string;
 }
 
+export const executorMap = {
+  npm: "npx",
+  yarn: "yarnpkg", // Not very correct since yarn has no similar command like `npx` and `pnpx` officially.
+  pnpm: "pnpx",
+} as const satisfies Record<SupportedPm, string>;
+
 const exists = async (p: string) =>
   await fs
     .access(p)
@@ -131,11 +137,6 @@ function getCommand(
   execute?: boolean,
 ) {
   const { name = "npm", version } = detectResult ?? {};
-  const executorMap = {
-    npm: "npx",
-    yarn: "yarnpkg", // Not very correct since yarn has no similar command like `npx` and `pnpx` officially.
-    pnpm: "pnpx",
-  } as const satisfies Record<SupportedPm, string>;
   const executor = execute ? executorMap[name] : name;
   return [`${executor}${version ? `@${version}` : ""}`, ...args];
 }
