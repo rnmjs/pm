@@ -125,27 +125,37 @@ function getCorepackPath(): string {
   );
 }
 
+function getCommand(
+  detectResult: DetectResult | undefined,
+  args: string[],
+  execute?: boolean,
+) {
+  const { name = "npm", version } = detectResult ?? {};
+  const executorMap = {
+    npm: "npx",
+    yarn: "yarnpkg", // Not very correct since yarn has no similar command like `npx` and `pnpx` officially.
+    pnpm: "pnpx",
+  } as const satisfies Record<SupportedPm, string>;
+  const executor = execute ? executorMap[name] : name;
+  return [`${executor}${version ? `@${version}` : ""}`, ...args];
+}
+
 export async function run(
   detectResult: DetectResult | undefined,
   args: string[],
+  execute?: boolean,
 ): Promise<number> {
-  const { name = "npm", version } = detectResult ?? {};
-  const cp = childProcess.spawn(
-    getCorepackPath(),
-    [`${name}${version ? `@${version}` : ""}`, ...args],
-    {
-      stdio: "inherit",
-      env: {
-        COREPACK_ENV_FILE: "0",
-        COREPACK_NPM_REGISTRY: registryUrl().replace(/\/$/, ""), // TODO: Remove this env when https://github.com/nodejs/corepack/issues/540 is resolved.
-        ...Object.fromEntries(
-          Object.entries(process.env).filter(
-            ([k]) => !k.startsWith("COREPACK_"),
-          ),
-        ),
-      },
+  const command = getCommand(detectResult, args, execute);
+  const cp = childProcess.spawn(getCorepackPath(), command, {
+    stdio: "inherit",
+    env: {
+      COREPACK_ENV_FILE: "0",
+      COREPACK_NPM_REGISTRY: registryUrl().replace(/\/$/, ""), // TODO: Remove this env when https://github.com/nodejs/corepack/issues/540 is resolved.
+      ...Object.fromEntries(
+        Object.entries(process.env).filter(([k]) => !k.startsWith("COREPACK_")),
+      ),
     },
-  );
+  });
 
   const listener = (signal: NodeJS.Signals) => !cp.killed && cp.kill(signal);
   process.on("SIGINT", listener);
@@ -163,16 +173,22 @@ export async function run(
   });
 }
 
-export function getMsg(detectResult: DetectResult | undefined, args: string[]) {
+export function getMsg(
+  detectResult: DetectResult | undefined,
+  args: string[],
+  execute?: boolean,
+) {
   const name = detectResult?.name ?? "npm";
   const version = detectResult?.version ?? "unknown";
   const nameVer = `[${name}@${version}]`;
   const info = detectResult ? "(detected)" : "(fallback)";
 
+  const command = getCommand(detectResult, args, execute);
+  command[0] &&= command[0].replace(/@.*$/, "");
   return [
     "📦",
     `${chalk.bold(nameVer)}${chalk.dim(info)}`,
     "➜",
-    chalk.blue([name, ...args].join(" ")),
+    chalk.blue(command.join(" ")),
   ].join(" ");
 }

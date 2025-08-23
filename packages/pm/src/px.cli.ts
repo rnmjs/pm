@@ -3,12 +3,7 @@ import process from "node:process";
 import { detect, getMsg, run } from "./base.ts";
 
 const result = await detect();
-const args = [
-  ...(result?.name === "pnpm" || result?.name === "yarn"
-    ? ["dlx"]
-    : ["exec", "--"]),
-  ...process.argv.slice(2),
-];
-const msg = getMsg(result, args);
+const args = process.argv.slice(2);
+const msg = getMsg(result, args, true);
 console.log(msg);
-process.exit(await run(result, args));
+process.exit(await run(result, args, true));
