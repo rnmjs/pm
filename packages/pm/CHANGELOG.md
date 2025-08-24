@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.3.0-beta.1
+
+### Patch Changes
+
+- feat: use specified pm only, no transparent
+
 ## 0.3.0-beta.0
 
 ### Minor Changes
