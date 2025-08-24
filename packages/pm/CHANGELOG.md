@@ -1,5 +1,17 @@
 # @rnm/pm
 
+## 0.3.0
+
+### Minor Changes
+
+- b56dbae: feat: remove the default built-in `yarn` and `pnpm` command and support `enable-pm-shims` command
+
+  After globally installing `@rnm/pm` by running `npm i -g @rnm/pm`, you can run `enable-pm-shims yarn pnpm` to enable the shims for `yarn` and `pnpm`.
+
+- c50021b: feat: change `px`
+
+  Now, running `px foo bar` is equivalent to `npx foo bar`, `yarnpkg foo bar`, or `pnpx foo bar`
+
 ## 0.2.5
 
 ### Patch Changes
