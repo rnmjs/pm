@@ -4,5 +4,9 @@
   "initialVersions": {
     "@rnm/pm": "0.2.5"
   },
-  "changesets": ["large-apples-work", "silly-places-teach"]
+  "changesets": [
+    "large-apples-work",
+    "quiet-planets-like",
+    "silly-places-teach"
+  ]
 }
