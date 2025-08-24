@@ -58,7 +58,7 @@ In summary: **Use npm for installing global CLI tools, and use `@rnm/pm` for dai
 - **🔀 Version Management**: Auto switches to the proper version of the detected package manager.
 - **⚡️ Zero Configuration**: No configuration required. Just install globally and start using it.
 - **🌍 Global Safety**: Does not modify or override existing global package managers.
-- **🪶 Lightweight**: Tiny codebase (<200 lines).
+- **🪶 Lightweight**: Tiny codebase (< 300 lines).
 
 ## Installation
 

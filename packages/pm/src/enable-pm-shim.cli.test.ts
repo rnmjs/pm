@@ -4,7 +4,7 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 
-describe("enable-pm-shim", () => {
+describe("enable-pm-shim.cli", () => {
   it("should create shim files for npm, yarn, and pnpm", async () => {
     const argv1 = process.argv[1];
     if (!argv1) throw new Error("process.argv[1] is not defined");
