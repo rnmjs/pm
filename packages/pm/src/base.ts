@@ -7,20 +7,13 @@ import { fileURLToPath } from "node:url";
 import chalk from "chalk";
 import corepackPkgJson from "corepack/package.json" with { type: "json" };
 import registryUrl from "registry-url";
+import { executorMap, type SupportedPm } from "./constants.ts";
 import { importMetaResolve } from "./import-meta-resolve.ts";
-
-export type SupportedPm = "npm" | "yarn" | "pnpm";
 
 export interface DetectResult {
   name: SupportedPm;
   version?: string;
 }
-
-export const executorMap = {
-  npm: "npx",
-  yarn: "yarnpkg", // Not very correct since yarn has no similar command like `npx` and `pnpx` officially.
-  pnpm: "pnpx",
-} as const satisfies Record<SupportedPm, string>;
 
 const exists = async (p: string) =>
   await fs

@@ -1,4 +1,5 @@
-import { detect, run, type SupportedPm } from "../base.ts";
+import { detect, run } from "../base.ts";
+import type { SupportedPm } from "../constants.ts";
 
 export async function executeShim(
   pm: SupportedPm,

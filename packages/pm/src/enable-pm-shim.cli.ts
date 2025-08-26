@@ -3,7 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
-import { executorMap, type SupportedPm } from "./base.ts";
+import { executorMap, type SupportedPm } from "./constants.ts";
 
 // 1. Get installDirectory
 const currentFile = process.argv[1];
