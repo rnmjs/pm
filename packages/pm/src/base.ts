@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 import chalk from "chalk";
 import corepackPkgJson from "corepack/package.json" with { type: "json" };
 import registryUrl from "registry-url";
-import { executorMap, type SupportedPm } from "./constants.ts";
+import { defaultVersions, executorMap, type SupportedPm } from "./constants.ts";
 import { importMetaResolve } from "./import-meta-resolve.ts";
 
 export interface DetectResult {
@@ -129,9 +129,10 @@ function getCommand(
   args: string[],
   execute?: boolean,
 ) {
-  const { name = "npm", version } = detectResult ?? {};
+  const { name = "npm" } = detectResult ?? {};
+  const { version = defaultVersions[name] } = detectResult ?? {};
   const executor = execute ? executorMap[name] : name;
-  return [`${executor}${version ? `@${version}` : ""}`, ...args];
+  return [`${executor}@${version}`, ...args];
 }
 
 export async function run(
@@ -143,6 +144,7 @@ export async function run(
   const cp = childProcess.spawn(getCorepackPath(), command, {
     stdio: "inherit",
     env: {
+      COREPACK_DEFAULT_TO_LATEST: "0",
       COREPACK_ENV_FILE: "0",
       COREPACK_NPM_REGISTRY: registryUrl().replace(/\/$/, ""), // TODO: Remove this env when https://github.com/nodejs/corepack/issues/540 is resolved.
       ...Object.fromEntries(
@@ -173,7 +175,7 @@ export function getMsg(
   execute?: boolean,
 ) {
   const name = detectResult?.name ?? "npm";
-  const version = detectResult?.version ?? "unknown";
+  const version = detectResult?.version ?? defaultVersions[name];
   const nameVer = `[${name}@${version}]`;
   const info = detectResult ? "(detected)" : "(fallback)";
 

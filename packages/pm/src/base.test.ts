@@ -14,6 +14,7 @@ import {
   vi,
 } from "vitest";
 import { detect, run } from "./base.ts";
+import { defaultVersions } from "./constants.ts";
 
 // This is needed because vitest does not support import.meta.resolve.
 // When vitest supports import.meta.resolve, this mock can be removed.
@@ -161,7 +162,7 @@ describe("base", () => {
           "corepack.js",
         ),
       );
-      expect(call[1]).toEqual(["pnpm", "--help"]);
+      expect(call[1]).toEqual([`pnpm@${defaultVersions.pnpm}`, "--help"]);
       expect(call[2]).toBeInstanceOf(Object);
     });
   });
@@ -231,7 +232,7 @@ describe("base", () => {
           "corepack.js",
         ),
       );
-      expect(call[1]).toEqual(["yarn", "--help"]);
+      expect(call[1]).toEqual([`yarn@${defaultVersions.yarn}`, "--help"]);
       expect(call[2]).toBeInstanceOf(Object);
     });
   });
@@ -276,7 +277,7 @@ describe("base", () => {
           "corepack.js",
         ),
       );
-      expect(call[1]).toEqual(["npm", "--help"]);
+      expect(call[1]).toEqual([`npm@${defaultVersions.npm}`, "--help"]);
       expect(call[2]).toBeInstanceOf(Object);
     });
   });
