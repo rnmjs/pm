@@ -12,7 +12,7 @@ describe("pm.cli", () => {
     expect(exitMock).toBeCalledTimes(1);
     expect(exitMock).toBeCalledWith(0);
     expect(logMock).toBeCalledTimes(1);
-    expect(logMock).toBeCalledWith("📦 [pnpm@10.10.0](detected) ➜ pnpm -v");
+    expect(logMock).toBeCalledWith("📦 [pnpm@10.15.1](detected) ➜ pnpm -v");
     process.argv.pop();
   });
 });

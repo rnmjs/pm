@@ -13,7 +13,7 @@ describe("px.cli", () => {
     expect(exitMock).toBeCalledWith(0);
     expect(logMock).toBeCalledTimes(1);
     expect(logMock).toBeCalledWith(
-      "📦 [pnpm@10.10.0](detected) ➜ pnpx @rnm/pm -v",
+      "📦 [pnpm@10.15.1](detected) ➜ pnpx @rnm/pm -v",
     );
     process.argv.splice(-2);
   });

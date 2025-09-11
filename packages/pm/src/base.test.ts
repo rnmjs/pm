@@ -30,7 +30,7 @@ vi.mock("./import-meta-resolve.ts", () => ({
 describe("base", () => {
   const spawnMock = vi.spyOn(childProcess, "spawn").mockImplementation(
     () =>
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- optimize it later
       ({
         on: (event: string, listener: (...args: any[]) => void) => {
           if (event === "close") listener(0);
@@ -301,7 +301,7 @@ describe("base", () => {
           "corepack.js",
         ),
       );
-      expect(call[1]).toEqual(["pnpm@10.10.0", "--help"]);
+      expect(call[1]).toEqual(["pnpm@10.15.1", "--help"]);
       expect(call[2]).toBeInstanceOf(Object);
     });
   });

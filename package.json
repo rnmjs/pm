@@ -14,9 +14,9 @@
     "test": "pm style && pm -r test"
   },
   "devDependencies": {
-    "@changesets/cli": "2.29.6",
+    "@changesets/cli": "2.29.7",
     "@rnm/pm": "workspace:*",
-    "fenge": "0.9.10",
+    "fenge": "0.10.3",
     "typescript": "5.9.2"
   },
   "engines": {
@@ -29,7 +29,7 @@
     },
     "packageManager": {
       "name": "pnpm",
-      "version": "10.10.0"
+      "version": "10.15.1"
     }
   }
 }
