@@ -8,23 +8,29 @@ import { executorMap, type SupportedPm } from "./constants.ts";
 await main();
 
 async function main(): Promise<void> {
-  if (process.argv[2] === "enable-shim") {
-    const argv = process.argv.slice(3);
-    if (argv.length === 0) {
+  switch (process.argv[2] ?? "") {
+    case "enable-shim":
       await enableShim();
-      return;
-    }
-    const packageManagers: SupportedPm[] = [];
-    if (argv.includes("npm")) packageManagers.push("npm");
-    if (argv.includes("yarn")) packageManagers.push("yarn");
-    if (argv.includes("pnpm")) packageManagers.push("pnpm");
-    await enableShim(packageManagers);
+      break;
+    case "check":
+      // TODO: check();
+      break;
+    default:
+      console.log("Usage: pm-cli enable-shim [npm] [yarn] [pnpm]");
   }
 }
 
-async function enableShim(
-  packageManagers: SupportedPm[] = ["npm", "yarn", "pnpm"],
-): Promise<void> {
+async function enableShim(): Promise<void> {
+  const argv = process.argv.slice(3);
+  const packageManagers: SupportedPm[] = [];
+  if (argv.length === 0) {
+    packageManagers.push(...(["npm", "yarn", "pnpm"] as const));
+  } else {
+    if (argv.includes("npm")) packageManagers.push("npm");
+    if (argv.includes("yarn")) packageManagers.push("yarn");
+    if (argv.includes("pnpm")) packageManagers.push("pnpm");
+  }
+
   // 1. Get installDirectory
   const currentFile = process.argv[1];
   if (!currentFile || !path.isAbsolute(currentFile)) {
