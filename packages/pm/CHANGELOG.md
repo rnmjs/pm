@@ -1,5 +1,20 @@
 # @rnm/pm
 
+## 0.4.0
+
+### Minor Changes
+
+- 71b8758: refactor!: remove `enable-pm-shim` command and implement `pm-cli` command
+
+  Run `pm-cli enable-shim` instead of `enable-pm-shim`.
+  Run `pm-cli enable-shim pnpm yarn` instead of `enable-pm-shim pnpm yarn`.
+
+### Patch Changes
+
+- 68e12fc: feat: add `pm-cli check-pm` command to validate package manager consistency
+
+  This new command `pm-cli check-pm` allows you to verify that the currently executing package manager matches the one detected in your project. Add `"preinstall": "pm-cli check-pm"` to your package.json scripts to automatically validate package manager consistency before installation.
+
 ## 0.3.1
 
 ### Patch Changes
