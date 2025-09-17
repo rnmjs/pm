@@ -16,8 +16,8 @@ vi.mock("./base.ts", () => ({
 describe("pm-cli.cli", () => {
   let originalArgv: string[] = [];
   let originalExit: typeof process.exit = process.exit;
-  let originalConsoleError: typeof console.error = console.error; // eslint-disable-line no-console -- Store original console.error for restoration
-  let originalConsoleWarn: typeof console.warn = console.warn; // eslint-disable-line no-console -- Store original console.warn for restoration
+  let originalConsoleError: typeof console.error = console.error;
+  let originalConsoleWarn: typeof console.warn = console.warn;
   let mockExit: ReturnType<typeof vi.fn> = vi.fn();
   let mockConsoleError: ReturnType<typeof vi.fn> = vi.fn();
   let mockConsoleWarn: ReturnType<typeof vi.fn> = vi.fn();
@@ -25,26 +25,22 @@ describe("pm-cli.cli", () => {
   beforeEach(() => {
     originalArgv = [...process.argv];
     originalExit = process.exit;
-    originalConsoleError = console.error; // eslint-disable-line no-console -- Store original console.error for restoration
-    originalConsoleWarn = console.warn; // eslint-disable-line no-console -- Store original console.warn for restoration
+    originalConsoleError = console.error;
+    originalConsoleWarn = console.warn;
 
     mockExit = vi.fn();
     mockConsoleError = vi.fn();
     mockConsoleWarn = vi.fn();
 
     process.exit = mockExit as any;
-    // eslint-disable-next-line no-console -- Need to mock console.error for testing
     console.error = mockConsoleError;
-    // eslint-disable-next-line no-console -- Need to mock console.warn for testing
     console.warn = mockConsoleWarn;
   });
 
   afterEach(() => {
     process.argv = originalArgv;
     process.exit = originalExit;
-    // eslint-disable-next-line no-console -- Restore original console.error after testing
     console.error = originalConsoleError;
-    // eslint-disable-next-line no-console -- Restore original console.warn after testing
     console.warn = originalConsoleWarn;
     vi.resetAllMocks();
     // Clear module cache to ensure fresh imports
