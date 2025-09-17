@@ -39,7 +39,7 @@ async function findUp(name: string, { cwd = process.cwd() } = {}) {
   return await findUp(name, { cwd: parent });
 }
 
-async function detectByPackageJson(
+export async function detectByPackageJson(
   directory = process.cwd(),
 ): Promise<DetectResult | undefined> {
   const pkgJsonContent = await importPkgJson(

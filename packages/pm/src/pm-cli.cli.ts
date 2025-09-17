@@ -3,6 +3,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
+import whichPmRuns from "which-pm-runs";
+import { detectByPackageJson } from "./base.ts";
 import { executorMap, type SupportedPm } from "./constants.ts";
 
 await main();
@@ -12,11 +14,49 @@ async function main(): Promise<void> {
     case "enable-shim":
       await enableShim();
       break;
-    case "check":
-      // TODO: check();
+    case "check-pm":
+      await checkPm();
       break;
     default:
-      console.log("Usage: pm-cli enable-shim [npm] [yarn] [pnpm]");
+      console.log("Usage:");
+      console.log("  pm-cli enable-shim [npm] [yarn] [pnpm]");
+      console.log("  pm-cli check-pm");
+  }
+}
+
+async function checkPm(): Promise<void> {
+  const expectedPm = await detectByPackageJson();
+  if (!expectedPm) {
+    console.error(
+      "❌ No package manager configured in package.json. Please configure a package manager using one of the following methods:",
+    );
+    console.error('  - Add "packageManager" field in package.json');
+    console.error('  - Add "devEngines.packageManager" field in package.json');
+    console.error('  - Add package manager in "engines" field in package.json');
+    process.exit(1);
+  }
+
+  const currentPm = whichPmRuns();
+  if (!currentPm) {
+    console.error("❌ Unable to detect the current package manager");
+    process.exit(1);
+  }
+
+  if (expectedPm.name !== currentPm.name) {
+    console.error("❌ Package manager mismatch:");
+    console.error(`  Expected: ${expectedPm.name}`);
+    console.error(`  Current:  ${currentPm.name}`);
+    process.exit(1);
+  }
+
+  if (
+    expectedPm.version &&
+    currentPm.version &&
+    expectedPm.version !== currentPm.version
+  ) {
+    console.warn("⚠️  Package manager version mismatch:");
+    console.warn(`  Expected: ${expectedPm.name}@${expectedPm.version}`);
+    console.warn(`  Current:  ${currentPm.name}@${currentPm.version}`);
   }
 }
 
