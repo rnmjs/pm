@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.4.1
+
+### Patch Changes
+
+- a85e5a1: feat: support `--version` option for `pm-cli`
+
 ## 0.4.0
 
 ### Minor Changes
