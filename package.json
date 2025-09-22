@@ -16,7 +16,7 @@
   "devDependencies": {
     "@changesets/cli": "2.29.7",
     "@rnm/pm": "workspace:*",
-    "fenge": "0.10.4",
+    "fenge": "0.11.0",
     "typescript": "5.9.2"
   },
   "engines": {

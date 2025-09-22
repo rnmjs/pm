@@ -4,6 +4,7 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import whichPmRuns from "which-pm-runs";
+import packageJson from "../package.json" with { type: "json" };
 import { detectByPackageJson } from "./base.ts";
 import { executorMap, type SupportedPm } from "./constants.ts";
 
@@ -17,11 +18,19 @@ async function main(): Promise<void> {
     case "check-pm":
       await checkPm();
       break;
+    case "-v":
+    case "--version":
+      version();
+      break;
     default:
-      console.log("Usage:");
-      console.log("  pm-cli enable-shim [npm] [yarn] [pnpm]");
-      console.log("  pm-cli check-pm");
+      help();
   }
+}
+
+function help() {
+  console.log("Usage:");
+  console.log("  pm-cli enable-shim [npm] [yarn] [pnpm]");
+  console.log("  pm-cli check-pm");
 }
 
 async function checkPm(): Promise<void> {
@@ -100,4 +109,8 @@ async function enableShim(): Promise<void> {
     await fs.unlink(file).catch((_error: unknown) => undefined);
     await fs.symlink(symlink, file);
   }
+}
+
+function version() {
+  console.log(packageJson.version);
 }
