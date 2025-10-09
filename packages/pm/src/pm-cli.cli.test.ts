@@ -248,7 +248,7 @@ describe("pm-cli.cli", () => {
         name: "yarn",
         version: "1.22.22",
       });
-      vi.mocked(whichPmRuns).mockReturnValue({ name: "yarn" });
+      vi.mocked(whichPmRuns).mockReturnValue({ name: "yarn", version: "" });
 
       process.argv = ["node", "pm-cli.cli.ts", "check-pm"];
 

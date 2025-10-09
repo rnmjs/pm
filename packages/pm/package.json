@@ -27,8 +27,8 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc",
-    "test": "vitest run --coverage --coverage.reporter=json-summary --coverage.reporter=html && make-coverage-badge --output-path badge/coverage.svg"
+    "build": "tscx --include src --exclude '**/*.test.ts'",
+    "test": "tsc --noEmit && vitest run --coverage --coverage.reporter=json-summary --coverage.reporter=html && make-coverage-badge --output-path badge/coverage.svg"
   },
   "dependencies": {
     "chalk": "5.6.2",
@@ -37,7 +37,7 @@
     "which-pm-runs": "1.1.0"
   },
   "devDependencies": {
-    "@types/node": "18.19.126",
+    "@types/node": "18.19.129",
     "@types/which-pm-runs": "1.0.2",
     "@vitest/coverage-v8": "3.2.4",
     "make-coverage-badge": "1.2.0",

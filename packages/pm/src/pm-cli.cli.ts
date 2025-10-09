@@ -4,7 +4,6 @@ import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import whichPmRuns from "which-pm-runs";
-import packageJson from "../package.json" with { type: "json" };
 import { detectByPackageJson } from "./base.ts";
 import { executorMap, type SupportedPm } from "./constants.ts";
 
@@ -20,7 +19,7 @@ async function main(): Promise<void> {
       break;
     case "-v":
     case "--version":
-      version();
+      await version();
       break;
     default:
       help();
@@ -111,6 +110,16 @@ async function enableShim(): Promise<void> {
   }
 }
 
-function version() {
+async function version() {
+  const packageJson = JSON.parse(
+    await fs.readFile(
+      path.join(
+        path.dirname(fileURLToPath(import.meta.url)),
+        "..",
+        "package.json",
+      ),
+      "utf8",
+    ),
+  );
   console.log(packageJson.version);
 }

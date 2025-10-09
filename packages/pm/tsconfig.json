@@ -1,5 +1,3 @@
 {
-  "extends": ["../../tsconfig", "fenge/tsconfig/node"],
-  "include": ["src"],
-  "exclude": ["**/*.test.ts"]
+  "extends": ["fenge/tsconfig", "fenge/tsconfig/node"]
 }
