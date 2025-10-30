@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.4.2
+
+### Patch Changes
+
+- 33a199a: chore: add warn
+
 ## 0.4.1
 
 ### Patch Changes
