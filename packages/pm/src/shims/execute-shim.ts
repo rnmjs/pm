@@ -1,5 +1,5 @@
 import { detect, run } from "../base.ts";
-import type { SupportedPm } from "../constants.ts";
+import { executorMap, type SupportedPm } from "../constants.ts";
 
 export async function executeShim(
   pm: SupportedPm,
@@ -14,6 +14,12 @@ export async function executeShim(
       `Current project should use ${result.name} as package manager.`,
     );
   }
+  const runningCommand = execute ? executorMap[pm] : pm;
+  const recommendedCommand = execute ? "px" : "pm";
+  // eslint-disable-next-line no-console -- If we don't add console here, we need to add it to all the callers, which is tedious.
+  console.warn(
+    `⚠️ You are using '${runningCommand}', which is a shim created by '@rnm/pm'. We recommend that you always use the '${recommendedCommand}' command directly, rather than '${runningCommand}'.`,
+  );
   return await run(
     { name: pm, ...(result?.version && { version: result.version }) },
     args,
