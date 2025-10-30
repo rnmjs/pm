@@ -1,6 +1,6 @@
 {
   "name": "@rnm/pm",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Unified Package Manager for Node.js",
   "keywords": [
     "corepack",
