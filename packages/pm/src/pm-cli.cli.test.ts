@@ -18,23 +18,28 @@ describe("pm-cli.cli", () => {
   let originalExit: typeof process.exit = process.exit;
   let originalConsoleError: typeof console.error = console.error;
   let originalConsoleWarn: typeof console.warn = console.warn;
+  let originalConsoleLog: typeof console.log = console.log;
   let mockExit: ReturnType<typeof vi.fn> = vi.fn();
   let mockConsoleError: ReturnType<typeof vi.fn> = vi.fn();
   let mockConsoleWarn: ReturnType<typeof vi.fn> = vi.fn();
+  let mockConsoleLog: ReturnType<typeof vi.fn> = vi.fn();
 
   beforeEach(() => {
     originalArgv = [...process.argv];
     originalExit = process.exit;
     originalConsoleError = console.error;
     originalConsoleWarn = console.warn;
+    originalConsoleLog = console.log;
 
     mockExit = vi.fn();
     mockConsoleError = vi.fn();
     mockConsoleWarn = vi.fn();
+    mockConsoleLog = vi.fn();
 
     process.exit = mockExit as any;
     console.error = mockConsoleError;
     console.warn = mockConsoleWarn;
+    console.log = mockConsoleLog;
   });
 
   afterEach(() => {
@@ -42,41 +47,44 @@ describe("pm-cli.cli", () => {
     process.exit = originalExit;
     console.error = originalConsoleError;
     console.warn = originalConsoleWarn;
+    console.log = originalConsoleLog;
     vi.resetAllMocks();
     // Clear module cache to ensure fresh imports
     vi.resetModules();
   });
 
-  it("should create shim files for npm, yarn, and pnpm when enable-shim is called", async () => {
-    // Mock process.argv to simulate "enable-shim" command
-    process.argv = [
-      "node",
-      path.join(os.tmpdir(), "pm-cli.cli.ts"),
-      "enable-shim",
-    ];
+  describe("enable-shim command", () => {
+    it("should create shim files for npm, yarn, and pnpm when enable-shim is called", async () => {
+      // Mock process.argv to simulate "enable-shim" command
+      process.argv = [
+        "node",
+        path.join(os.tmpdir(), "pm-cli.cli.ts"),
+        "enable-shim",
+      ];
 
-    const argv1 = process.argv[1];
-    if (!argv1) throw new Error("process.argv[1] is not defined");
-    const installDirectory = path.dirname(argv1);
+      const argv1 = process.argv[1];
+      if (!argv1) throw new Error("process.argv[1] is not defined");
+      const installDirectory = path.dirname(argv1);
 
-    const importMetaDirname = path.dirname(fileURLToPath(import.meta.url));
-    const shimsDirectory = path.join(importMetaDirname, "shims");
+      const importMetaDirname = path.dirname(fileURLToPath(import.meta.url));
+      const shimsDirectory = path.join(importMetaDirname, "shims");
 
-    await import("./pm-cli.cli.ts");
-    for (const item of ["npm", "yarn", "pnpm", "npx", "yarnpkg", "pnpx"]) {
-      const link = await fs.readlink(path.join(installDirectory, item));
-      expect(link).toBe(
-        path.relative(
-          installDirectory,
-          path.join(shimsDirectory, `${item}.cli.ts`),
-        ),
-      );
-    }
+      await import("./pm-cli.cli.ts");
+      for (const item of ["npm", "yarn", "pnpm", "npx", "yarnpkg", "pnpx"]) {
+        const link = await fs.readlink(path.join(installDirectory, item));
+        expect(link).toBe(
+          path.relative(
+            installDirectory,
+            path.join(shimsDirectory, `${item}.cli.ts`),
+          ),
+        );
+      }
 
-    // Clean up shim files
-    for (const item of ["npm", "yarn", "pnpm", "npx", "yarnpkg", "pnpx"]) {
-      await fs.unlink(path.join(installDirectory, item));
-    }
+      // Clean up shim files
+      for (const item of ["npm", "yarn", "pnpm", "npx", "yarnpkg", "pnpx"]) {
+        await fs.unlink(path.join(installDirectory, item));
+      }
+    });
   });
 
   describe("check-pm command", () => {
@@ -276,6 +284,20 @@ describe("pm-cli.cli", () => {
       expect(mockExit).not.toHaveBeenCalled();
       expect(mockConsoleError).not.toHaveBeenCalled();
       expect(mockConsoleWarn).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("--version option", () => {
+    it("should output the package version", async () => {
+      process.argv = ["node", "pm-cli.cli.ts", "--version"];
+
+      await import("./pm-cli.cli.ts");
+
+      const packageJson = JSON.parse(
+        await fs.readFile(path.join(process.cwd(), "package.json"), "utf8"),
+      );
+      expect(mockConsoleLog).toHaveBeenCalledWith(expect.any(String));
+      expect(mockConsoleLog).toHaveBeenCalledWith(packageJson.version);
     });
   });
 });
