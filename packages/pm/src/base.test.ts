@@ -81,15 +81,17 @@ describe("base", () => {
     expect(childProcess.spawn).toHaveBeenCalledOnce();
     expect(vi.mocked(childProcess.spawn).mock.calls.length).toBe(1);
     vi.mocked(childProcess.spawn).mock.calls.forEach((call) => {
-      expect(call[0]).toBe(
+      expect(call[0]).toBe(process.execPath);
+      expect(call[1]).toEqual([
         path.resolve(
           createRequire(import.meta.url).resolve("corepack/package.json"),
           "..",
           "dist",
           "corepack.js",
         ),
-      );
-      expect(call[1]).toEqual(["yarn@1.1.1", "--help"]);
+        "yarn@1.1.1",
+        "--help",
+      ]);
       expect(call[2]).toBeInstanceOf(Object);
     });
   });
@@ -120,15 +122,17 @@ describe("base", () => {
     expect(childProcess.spawn).toHaveBeenCalledOnce();
     expect(vi.mocked(childProcess.spawn).mock.calls.length).toBe(1);
     vi.mocked(childProcess.spawn).mock.calls.forEach((call) => {
-      expect(call[0]).toBe(
+      expect(call[0]).toBe(process.execPath);
+      expect(call[1]).toEqual([
         path.resolve(
           createRequire(import.meta.url).resolve("corepack/package.json"),
           "..",
           "dist",
           "corepack.js",
         ),
-      );
-      expect(call[1]).toEqual(["npm@1.2.3", "--help"]);
+        "npm@1.2.3",
+        "--help",
+      ]);
       expect(call[2]).toBeInstanceOf(Object);
     });
   });
@@ -154,15 +158,17 @@ describe("base", () => {
     expect(childProcess.spawn).toHaveBeenCalledOnce();
     expect(vi.mocked(childProcess.spawn).mock.calls.length).toBe(1);
     vi.mocked(childProcess.spawn).mock.calls.forEach((call) => {
-      expect(call[0]).toBe(
+      expect(call[0]).toBe(process.execPath);
+      expect(call[1]).toEqual([
         path.resolve(
           createRequire(import.meta.url).resolve("corepack/package.json"),
           "..",
           "dist",
           "corepack.js",
         ),
-      );
-      expect(call[1]).toEqual([`pnpm@${defaultVersions.pnpm}`, "--help"]);
+        `pnpm@${defaultVersions.pnpm}`,
+        "--help",
+      ]);
       expect(call[2]).toBeInstanceOf(Object);
     });
   });
@@ -195,15 +201,17 @@ describe("base", () => {
     expect(childProcess.spawn).toHaveBeenCalledOnce();
     expect(vi.mocked(childProcess.spawn).mock.calls.length).toBe(1);
     vi.mocked(childProcess.spawn).mock.calls.forEach((call) => {
-      expect(call[0]).toBe(
+      expect(call[0]).toBe(process.execPath);
+      expect(call[1]).toEqual([
         path.resolve(
           createRequire(import.meta.url).resolve("corepack/package.json"),
           "..",
           "dist",
           "corepack.js",
         ),
-      );
-      expect(call[1]).toEqual(["yarn@1.10.0", "--help"]);
+        "yarn@1.10.0",
+        "--help",
+      ]);
       expect(call[2]).toBeInstanceOf(Object);
     });
   });
@@ -224,15 +232,17 @@ describe("base", () => {
     expect(childProcess.spawn).toHaveBeenCalledOnce();
     expect(vi.mocked(childProcess.spawn).mock.calls.length).toBe(1);
     vi.mocked(childProcess.spawn).mock.calls.forEach((call) => {
-      expect(call[0]).toBe(
+      expect(call[0]).toBe(process.execPath);
+      expect(call[1]).toEqual([
         path.resolve(
           createRequire(import.meta.url).resolve("corepack/package.json"),
           "..",
           "dist",
           "corepack.js",
         ),
-      );
-      expect(call[1]).toEqual([`yarn@${defaultVersions.yarn}`, "--help"]);
+        `yarn@${defaultVersions.yarn}`,
+        "--help",
+      ]);
       expect(call[2]).toBeInstanceOf(Object);
     });
   });
@@ -269,15 +279,17 @@ describe("base", () => {
     expect(childProcess.spawn).toHaveBeenCalledOnce();
     expect(vi.mocked(childProcess.spawn).mock.calls.length).toBe(1);
     vi.mocked(childProcess.spawn).mock.calls.forEach((call) => {
-      expect(call[0]).toBe(
+      expect(call[0]).toBe(process.execPath);
+      expect(call[1]).toEqual([
         path.resolve(
           createRequire(import.meta.url).resolve("corepack/package.json"),
           "..",
           "dist",
           "corepack.js",
         ),
-      );
-      expect(call[1]).toEqual([`npm@${defaultVersions.npm}`, "--help"]);
+        `npm@${defaultVersions.npm}`,
+        "--help",
+      ]);
       expect(call[2]).toBeInstanceOf(Object);
     });
   });
@@ -293,15 +305,17 @@ describe("base", () => {
     expect(childProcess.spawn).toHaveBeenCalledOnce();
     expect(vi.mocked(childProcess.spawn).mock.calls.length).toBe(1);
     vi.mocked(childProcess.spawn).mock.calls.forEach((call) => {
-      expect(call[0]).toBe(
+      expect(call[0]).toBe(process.execPath);
+      expect(call[1]).toEqual([
         path.resolve(
           createRequire(import.meta.url).resolve("corepack/package.json"),
           "..",
           "dist",
           "corepack.js",
         ),
-      );
-      expect(call[1]).toEqual(["pnpm@10.15.1", "--help"]);
+        "pnpm@10.15.1",
+        "--help",
+      ]);
       expect(call[2]).toBeInstanceOf(Object);
     });
   });

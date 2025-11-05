@@ -141,17 +141,23 @@ export async function run(
   execute?: boolean,
 ): Promise<number> {
   const command = getCommand(detectResult, args, execute);
-  const cp = childProcess.spawn(getCorepackPath(), command, {
-    stdio: "inherit",
-    env: {
-      COREPACK_DEFAULT_TO_LATEST: "0",
-      COREPACK_ENV_FILE: "0",
-      COREPACK_NPM_REGISTRY: registryUrl().replace(/\/$/, ""), // TODO: Remove this env when https://github.com/nodejs/corepack/issues/540 is resolved.
-      ...Object.fromEntries(
-        Object.entries(process.env).filter(([k]) => !k.startsWith("COREPACK_")),
-      ),
+  const cp = childProcess.spawn(
+    process.execPath,
+    [getCorepackPath(), ...command],
+    {
+      stdio: "inherit",
+      env: {
+        COREPACK_DEFAULT_TO_LATEST: "0",
+        COREPACK_ENV_FILE: "0",
+        COREPACK_NPM_REGISTRY: registryUrl().replace(/\/$/, ""), // TODO: Remove this env when https://github.com/nodejs/corepack/issues/540 is resolved.
+        ...Object.fromEntries(
+          Object.entries(process.env).filter(
+            ([k]) => !k.startsWith("COREPACK_"),
+          ),
+        ),
+      },
     },
-  });
+  );
 
   const listener = (signal: NodeJS.Signals) => !cp.killed && cp.kill(signal);
   process.on("SIGINT", listener);
