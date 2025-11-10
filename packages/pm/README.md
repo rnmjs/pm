@@ -31,7 +31,7 @@ npm install -g @rnm/pm
 
 When inside a project directory, `pm` and `px` are aliases for `npm`/`yarn`/`pnpm` and `npx`/`yarnpkg`/`pnpx` respectively. The choice depends on the project's configuration. Falls back to `npm` and `npx` if no specific package manager is detected.
 
-**Configure `packageManager` or `devEngines.packageManager` in `package.json`:**
+Configure `packageManager` or `devEngines.packageManager` in `package.json`:
 
 ```json
 {
@@ -45,7 +45,7 @@ When inside a project directory, `pm` and `px` are aliases for `npm`/`yarn`/`pnp
 }
 ```
 
-**Commands work exactly like the underlying package manager:**
+Commands work exactly like the underlying package manager:
 
 ```bash
 # pm = smart alias for npm/yarn/pnpm
