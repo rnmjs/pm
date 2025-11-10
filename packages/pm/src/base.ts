@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
-import chalk from "chalk";
+import { styleText } from "node:util";
 import corepackPkgJson from "corepack/package.json" with { type: "json" };
 import { findUp } from "find-up-simple";
 import registryUrl from "registry-url";
@@ -176,8 +176,8 @@ export function getMsg(
   command[0] &&= command[0].replace(/@.*$/, "");
   return [
     "📦",
-    `${chalk.bold(nameVer)}${chalk.dim(info)}`,
+    `${styleText("bold", nameVer)}${styleText("dim", info)}`,
     "➜",
-    chalk.blue(command.join(" ")),
+    styleText("blue", command.join(" ")),
   ].join(" ");
 }
