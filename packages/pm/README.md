@@ -29,7 +29,7 @@ npm install -g @rnm/pm
 
 ### Inside Projects
 
-When inside a project directory, `pm` and `px` are aliases for `npm`/`yarn`/`pnpm` and `npx`/`yarnpkg`/`pnpx`. It depends on the the configurations in th project. Falls back to `npm` and `npx` if none found.
+When inside a project directory, `pm` and `px` are aliases for `npm`/`yarn`/`pnpm` and `npx`/`yarnpkg`/`pnpx` respectively. The choice depends on the project's configuration. Falls back to `npm` and `npx` if no specific package manager is detected.
 
 **Configure `packageManager` or `devEngines.packageManager` in `package.json`:**
 
@@ -52,7 +52,7 @@ When inside a project directory, `pm` and `px` are aliases for `npm`/`yarn`/`pnp
 pm install    # → npm/yarn/pnpm install
 pm run build  # → npm/yarn/pnpm run build
 pm --help     # → npm/yarn/pnpm --help
-pm --versoin  # → npm/yarn/pnpm --version
+pm --version  # → npm/yarn/pnpm --version
 
 # px = smart alias for npx/yarnpkg/pnpx
 px create-react-app my-app --template typescript  # → npx/yarnpkg/pnpx create-react-app my-app --template typescript
@@ -61,7 +61,7 @@ px tsx --watch src/index.ts                       # → npx/yarnpkg/pnpx tsx --w
 
 ### Outside Projects
 
-When outside project directories, `pm` and `px` are aliases for `npm` and `npx`. They are usually for global operations.
+When outside project directories, `pm` and `px` are aliases for `npm` and `npx`. These are typically used for global operations.
 
 ```bash
 # pm = alias for npm
@@ -98,10 +98,10 @@ This command creates symbolic links in your global installation directory, so wh
 
 1. `@rnm/pm` detects `packageManager`, `devEngines`, and `engines` fields in `package.json` to use the correct package manager, while `corepack` only supports `packageManager` and `devEngines` fields.
 2. `@rnm/pm` detects lock files (`package-lock.json`, `yarn.lock`, or `pnpm-lock.yaml`) and uses the corresponding package manager, while `corepack` does not.
-3. `@rnm/pm` ignores environment variables starting with the `COREPACK_` prefix, which means it is not configurable, while `corepack` does not.
+3. `@rnm/pm` ignores environment variables starting with the `COREPACK_` prefix, making it non-configurable, while `corepack` respects these variables.
 4. `@rnm/pm` ignores the `.corepack.env` file, while `corepack` consults it.
 5. `@rnm/pm` automatically uses the result of `$(npm config get registry)` as its registry to install packages, while `corepack` uses the environment variable `COREPACK_NPM_REGISTRY` as its registry.
-6. `@rnm/pm` has no transparency, while `corepack` does. See [config.json](https://github.com/nodejs/corepack/blob/main/config.json) of `corepack`.
+6. `@rnm/pm` does not provide transparency features, while `corepack` does. See [config.json](https://github.com/nodejs/corepack/blob/main/config.json) of `corepack`.
 
 ## Migration from Corepack
 
