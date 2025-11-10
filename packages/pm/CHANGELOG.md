@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.4.3
+
+### Patch Changes
+
+- 4f980bd: fix: avoid potential node version problem
+
 ## 0.4.2
 
 ### Patch Changes
