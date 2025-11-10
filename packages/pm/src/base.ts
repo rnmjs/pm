@@ -6,6 +6,7 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 import chalk from "chalk";
 import corepackPkgJson from "corepack/package.json" with { type: "json" };
+import { findUp } from "find-up-simple";
 import registryUrl from "registry-url";
 import { defaultVersions, executorMap, type SupportedPm } from "./constants.ts";
 import { importMetaResolve } from "./import-meta-resolve.ts";
@@ -15,11 +16,6 @@ export interface DetectResult {
   version?: string;
 }
 
-const exists = async (p: string) =>
-  await fs
-    .access(p)
-    .then(() => true)
-    .catch(() => false);
 const importPkgJson = async (p: string) =>
   await fs
     .readFile(p, "utf8")
@@ -29,15 +25,6 @@ const importPkgJson = async (p: string) =>
       devEngines?: { packageManager?: { name?: string; version?: string } };
     }>(JSON.parse)
     .catch(() => undefined);
-
-async function findUp(name: string, { cwd = process.cwd() } = {}) {
-  const result = path.join(cwd, name);
-  const existing = await exists(result);
-  if (existing) return result;
-  const parent = path.dirname(cwd);
-  if (parent === cwd) return undefined;
-  return await findUp(name, { cwd: parent });
-}
 
 export async function detectByPackageJson(
   directory = process.cwd(),
