@@ -105,10 +105,8 @@ This command creates symbolic links in your global installation directory, so wh
 
 ## Migration from Corepack
 
-1. (Optional) If Corepack has enabled npm, disable it by running `npm i npm -g` to restore the default behavior.
-2. Run `corepack disable yarn pnpm` to disable Corepack.
-3. Install `@rnm/pm` globally.
-4. Replace `npm`, `yarn`, and `pnpm` with `pm` in your projects.
+1. Install `@rnm/pm` globally using `npm install -g @rnm/pm`.
+2. Replace `npm`, `yarn`, and `pnpm` with `pm` in your projects.
 
 ## Show your support
 
