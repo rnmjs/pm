@@ -5,13 +5,12 @@ import { fileURLToPath } from "node:url";
 import corepackPkgJson from "corepack/package.json" with { type: "json" };
 import { describe, expect, it } from "vitest";
 import { defaultVersions } from "../src/constants.ts";
-import { importMetaResolve } from "../src/import-meta-resolve.ts";
 
 describe("version", () => {
   it("default versions should be the same as corepack's", () => {
     for (const packageManager of ["npm", "yarn", "pnpm"] as const) {
       const corepackPkgJsonPath = fileURLToPath(
-        importMetaResolve("corepack/package.json"),
+        import.meta.resolve("corepack/package.json"),
       );
       const corepackPath = path.resolve(
         path.dirname(corepackPkgJsonPath),
