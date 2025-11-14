@@ -9,7 +9,6 @@ import corepackPkgJson from "corepack/package.json" with { type: "json" };
 import { findUp } from "find-up-simple";
 import registryUrl from "registry-url";
 import { defaultVersions, executorMap, type SupportedPm } from "./constants.ts";
-import { importMetaResolve } from "./import-meta-resolve.ts";
 
 export interface DetectResult {
   name: SupportedPm;
@@ -103,7 +102,7 @@ export async function detect(
  */
 function getCorepackPath(): string {
   const corepackPkgJsonPath = fileURLToPath(
-    importMetaResolve("corepack/package.json"),
+    import.meta.resolve("corepack/package.json"),
   );
   return path.resolve(
     path.dirname(corepackPkgJsonPath),
