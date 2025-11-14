@@ -4,12 +4,11 @@ import os from "node:os";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
-import chalk from "chalk";
+import { styleText } from "node:util";
 import corepackPkgJson from "corepack/package.json" with { type: "json" };
 import { findUp } from "find-up-simple";
 import registryUrl from "registry-url";
 import { defaultVersions, executorMap, type SupportedPm } from "./constants.ts";
-import { importMetaResolve } from "./import-meta-resolve.ts";
 
 export interface DetectResult {
   name: SupportedPm;
@@ -103,7 +102,7 @@ export async function detect(
  */
 function getCorepackPath(): string {
   const corepackPkgJsonPath = fileURLToPath(
-    importMetaResolve("corepack/package.json"),
+    import.meta.resolve("corepack/package.json"),
   );
   return path.resolve(
     path.dirname(corepackPkgJsonPath),
@@ -176,8 +175,8 @@ export function getMsg(
   command[0] &&= command[0].replace(/@.*$/, "");
   return [
     "📦",
-    `${chalk.bold(nameVer)}${chalk.dim(info)}`,
+    `${styleText("bold", nameVer)}${styleText("dim", info)}`,
     "➜",
-    chalk.blue(command.join(" ")),
+    styleText("blue", command.join(" ")),
   ].join(" ");
 }

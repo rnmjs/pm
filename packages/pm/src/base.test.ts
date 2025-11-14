@@ -16,17 +16,6 @@ import {
 import { detect, run } from "./base.ts";
 import { defaultVersions } from "./constants.ts";
 
-// This is needed because vitest does not support import.meta.resolve.
-// When vitest supports import.meta.resolve, this mock can be removed.
-vi.mock("./import-meta-resolve.ts", () => ({
-  importMetaResolve: vi
-    .fn()
-    .mockImplementation(
-      (specifier) =>
-        `file://${createRequire(import.meta.url).resolve(specifier)}`,
-    ),
-}));
-
 describe("base", () => {
   const spawnMock = vi.spyOn(childProcess, "spawn").mockImplementation(
     () =>
@@ -54,7 +43,7 @@ describe("base", () => {
     await fs.rm(tmpDir, { recursive: true });
   });
 
-  it("should cause error in a directory without package.json", async () => {
+  it("should not cause error in a directory without package.json", async () => {
     process.chdir(process.env["HOME"] ?? "/");
     const result = await detect();
     expect(result).toBeUndefined();
