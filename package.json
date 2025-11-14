@@ -5,17 +5,16 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "pm -r build",
-    "install": "pm build",
+    "build": "pnpm -r build",
+    "install": "pnpm build",
     "prepare": "fenge install",
-    "release": "pm -r --no-git-checks publish --tag $(test -f .changeset/pre.json && jq -r '.tag' .changeset/pre.json || echo 'latest')",
+    "release": "pnpm -r --no-git-checks publish --tag $(test -f .changeset/pre.json && jq -r '.tag' .changeset/pre.json || echo 'latest')",
     "style": "fenge",
     "style:update": "fenge -u",
-    "test": "pm style && pm -r test"
+    "test": "pnpm style && pnpm -r test"
   },
   "devDependencies": {
     "@changesets/cli": "2.29.7",
-    "@rnm/pm": "workspace:*",
     "@rnm/tscx": "0.3.10",
     "fenge": "0.12.3",
     "typescript": "5.9.3"
