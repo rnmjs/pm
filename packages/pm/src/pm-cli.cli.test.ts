@@ -20,9 +20,9 @@ describe("pm-cli.cli", () => {
   let originalConsoleWarn: typeof console.warn = console.warn;
   let originalConsoleLog: typeof console.log = console.log;
   let mockExit: ReturnType<typeof vi.fn> = vi.fn();
-  let mockConsoleError: ReturnType<typeof vi.fn> = vi.fn();
-  let mockConsoleWarn: ReturnType<typeof vi.fn> = vi.fn();
-  let mockConsoleLog: ReturnType<typeof vi.fn> = vi.fn();
+  let mockConsoleError: typeof console.error = vi.fn();
+  let mockConsoleWarn: typeof console.warn = vi.fn();
+  let mockConsoleLog: typeof console.log = vi.fn();
 
   beforeEach(() => {
     originalArgv = [...process.argv];
