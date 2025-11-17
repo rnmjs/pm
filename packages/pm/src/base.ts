@@ -7,8 +7,10 @@ import { fileURLToPath } from "node:url";
 import { styleText } from "node:util";
 import corepackPkgJson from "corepack/package.json" with { type: "json" };
 import { findUp } from "find-up-simple";
-import registryUrl from "registry-url";
+import semver from "semver";
 import { defaultVersions, executorMap, type SupportedPm } from "./constants.ts";
+import { fetchPmInfo } from "./utils/fetch-pm-info.ts";
+import { registryUrl } from "./utils/registry-url.ts";
 
 export interface DetectResult {
   name: SupportedPm;
@@ -110,13 +112,12 @@ function getCorepackPath(): string {
   );
 }
 
-function getCommand(
+async function getCommand(
   detectResult: DetectResult | undefined,
   args: string[],
   execute?: boolean,
 ) {
-  const { name = "npm" } = detectResult ?? {};
-  const { version = defaultVersions[name] } = detectResult ?? {};
+  const { name, version } = await getExcutingPmAndVersion(detectResult);
   const executor = execute ? executorMap[name] : name;
   return [`${executor}@${version}`, ...args];
 }
@@ -126,7 +127,7 @@ export async function run(
   args: string[],
   execute?: boolean,
 ): Promise<number> {
-  const command = getCommand(detectResult, args, execute);
+  const command = await getCommand(detectResult, args, execute);
   const cp = childProcess.spawn(
     process.execPath,
     [getCorepackPath(), ...command],
@@ -135,7 +136,7 @@ export async function run(
       env: {
         COREPACK_DEFAULT_TO_LATEST: "0",
         COREPACK_ENV_FILE: "0",
-        COREPACK_NPM_REGISTRY: registryUrl().replace(/\/$/, ""), // TODO: Remove this env when https://github.com/nodejs/corepack/issues/540 is resolved.
+        COREPACK_NPM_REGISTRY: registryUrl(), // TODO: Remove this env when https://github.com/nodejs/corepack/issues/540 is resolved.
         ...Object.fromEntries(
           Object.entries(process.env).filter(
             ([k]) => !k.startsWith("COREPACK_"),
@@ -161,17 +162,16 @@ export async function run(
   });
 }
 
-export function getMsg(
+export async function getMsg(
   detectResult: DetectResult | undefined,
   args: string[],
   execute?: boolean,
 ) {
-  const name = detectResult?.name ?? "npm";
-  const version = detectResult?.version ?? defaultVersions[name];
+  const { name, version } = await getExcutingPmAndVersion(detectResult);
   const nameVer = `[${name}@${version}]`;
   const info = detectResult ? "(detected)" : "(fallback)";
 
-  const command = getCommand(detectResult, args, execute);
+  const command = await getCommand(detectResult, args, execute);
   command[0] &&= command[0].replace(/@.*$/, "");
   return [
     "📦",
@@ -179,4 +179,57 @@ export function getMsg(
     "➜",
     styleText("blue", command.join(" ")),
   ].join(" ");
+}
+
+async function getDownloadedVersions(pm: SupportedPm, version = 1) {
+  // Copied from https://github.com/nodejs/corepack/blob/fae35276605ff6c28b7a5eef4eb41a8bd8b3f2c6/sources/folderUtils.ts#L14
+  const corepackHomeFolder = path.join(
+    process.env["XDG_CACHE_HOME"] ??
+      process.env["LOCALAPPDATA"] ??
+      path.join(
+        os.homedir(),
+        process.platform === "win32" ? "AppData/Local" : ".cache",
+      ),
+    "node/corepack",
+  );
+  const pmFolder = path.join(corepackHomeFolder, `v${version}`, pm);
+  return (await fs.readdir(pmFolder))
+    .filter((file) => semver.valid(file))
+    .sort((x, y) => semver.compare(y, x)); // desc
+}
+
+async function getRemoteVersions(pm: SupportedPm) {
+  const json: any = await fetchPmInfo(pm);
+  return Object.keys(json.versions)
+    .filter((version) => semver.valid(version) && !semver.prerelease(version))
+    .sort((x, y) => semver.compare(y, x));
+}
+
+async function getExcutingPmAndVersion(
+  detectResult: DetectResult | undefined,
+): Promise<Required<DetectResult>> {
+  const { name = "npm" } = detectResult ?? {};
+  const { version = defaultVersions[name] } = detectResult ?? {};
+  // 1. If version is valid, return it.
+  if (semver.valid(version)) {
+    return { name, version };
+  }
+  if (semver.validRange(version)) {
+    // 2. Try to find the version in the downloaded versions.
+    const downloadedVersions = await getDownloadedVersions(name);
+    for (const downloadedVersion of downloadedVersions) {
+      if (semver.satisfies(downloadedVersion, version)) {
+        return { name, version: downloadedVersion };
+      }
+    }
+    // 3. Try to find the version in the remote versions.
+    const remoteVersions = await getRemoteVersions(name);
+    for (const remoteVersion of remoteVersions) {
+      if (semver.satisfies(remoteVersion, version)) {
+        return { name, version: remoteVersion };
+      }
+    }
+  }
+  // 4. Return the default version.
+  return { name, version };
 }
