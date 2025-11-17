@@ -4,8 +4,8 @@ import { getMsg } from "./base.ts";
 import { defaultVersions } from "./constants.ts";
 
 describe("get-msg", () => {
-  it("should get return npm by default", () => {
-    const msg = getMsg(undefined, ["foo"]);
+  it("should get return npm by default", async () => {
+    const msg = await getMsg(undefined, ["foo"]);
     expect(msg).toBe(
       `📦 ${styleText("bold", `[npm@${defaultVersions.npm}]`)}${styleText("dim", "(fallback)")} ➜ ${styleText("blue", "npm foo")}`,
     );
