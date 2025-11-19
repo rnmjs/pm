@@ -1,5 +1,15 @@
 # @rnm/pm
 
+## 0.5.0-beta.0
+
+### Minor Changes
+
+- 292bc5c: refactor: require Node.js >= 20.12
+
+### Patch Changes
+
+- 59203aa: feat: support range version
+
 ## 0.4.3
 
 ### Patch Changes
