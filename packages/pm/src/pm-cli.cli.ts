@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
+import semver from "semver";
 import whichPmRuns from "which-pm-runs";
 import { detectByPackageJson } from "./base.ts";
 import { executorMap, type SupportedPm } from "./constants.ts";
@@ -60,7 +61,7 @@ async function checkPm(): Promise<void> {
   if (
     expectedPm.version &&
     currentPm.version &&
-    expectedPm.version !== currentPm.version
+    !semver.satisfies(currentPm.version, expectedPm.version)
   ) {
     console.warn("⚠️  Package manager version mismatch:");
     console.warn(`  Expected: ${expectedPm.name}@${expectedPm.version}`);
