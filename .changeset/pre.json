@@ -4,5 +4,5 @@
   "initialVersions": {
     "@rnm/pm": "0.4.3"
   },
-  "changesets": []
+  "changesets": ["gentle-tools-follow", "polite-coats-juggle"]
 }
