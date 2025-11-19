@@ -184,7 +184,7 @@ export async function getMsg(
 
 async function getDownloadedVersions(pm: SupportedPm) {
   const pmFolder = path.join(getCorepackHome(), pm);
-  return (await fs.readdir(pmFolder))
+  return (await fs.readdir(pmFolder).catch(() => []))
     .filter((file) => semver.valid(file))
     .sort((x, y) => semver.compare(y, x)); // desc
 }
