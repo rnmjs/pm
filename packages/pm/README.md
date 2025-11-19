@@ -96,12 +96,13 @@ This command creates symbolic links in your global installation directory, so wh
 
 ## Differences from Corepack
 
-1. `@rnm/pm` detects `packageManager`, `devEngines`, and `engines` fields in `package.json` to use the correct package manager, while `corepack` only supports `packageManager` and `devEngines` fields.
-2. `@rnm/pm` detects lock files (`package-lock.json`, `yarn.lock`, or `pnpm-lock.yaml`) and uses the corresponding package manager, while `corepack` does not.
-3. `@rnm/pm` ignores environment variables starting with the `COREPACK_` prefix, making it non-configurable, while `corepack` respects these variables.
-4. `@rnm/pm` ignores the `.corepack.env` file, while `corepack` consults it.
-5. `@rnm/pm` automatically uses the result of `$(npm config get registry)` as its registry to install packages, while `corepack` uses the environment variable `COREPACK_NPM_REGISTRY` as its registry.
-6. `@rnm/pm` does not provide transparency features, while `corepack` does. See [config.json](https://github.com/nodejs/corepack/blob/main/config.json) of `corepack`.
+1. **Field Detection**: `@rnm/pm` detects `packageManager`, `devEngines`, and `engines` fields in `package.json`, while Corepack only supports `packageManager` and `devEngines`.
+2. **Version Range Support**: `@rnm/pm` supports version ranges (e.g., `^10.0.0`) in `packageManager` and `devEngines.packageManager.version` fields, while Corepack only accepts specific versions.
+3. **Lock File Detection**: `@rnm/pm` automatically detects lock files (`package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`) to determine the package manager, while Corepack does not.
+4. **Environment Variables**: `@rnm/pm` ignores `COREPACK_*` environment variables for non-configurable behavior, while Corepack respects them.
+5. **Configuration Files**: `@rnm/pm` ignores `.corepack.env` files, while Corepack reads them for configuration.
+6. **Registry Configuration**: `@rnm/pm` uses `npm config get registry` for package installation, while Corepack uses the `COREPACK_NPM_REGISTRY` environment variable.
+7. **Transparency Features**: `@rnm/pm` does not provide transparency features, unlike Corepack. See Corepack's [config.json](https://github.com/nodejs/corepack/blob/main/config.json) for details.
 
 ## Migration from Corepack
 
