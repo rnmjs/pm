@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.5.1
+
+### Patch Changes
+
+- 4170983: fix: fix file not found error for corepack home
+
 ## 0.5.0
 
 ### Minor Changes
