@@ -13,8 +13,9 @@ import {
   it,
   vi,
 } from "vitest";
-import { detect, run } from "./base.ts";
+import { run } from "./base.ts";
 import { defaultVersions } from "./constants.ts";
+import { detect } from "./utils/detector.ts";
 
 describe("base", () => {
   const spawnMock = vi.spyOn(childProcess, "spawn").mockImplementation(

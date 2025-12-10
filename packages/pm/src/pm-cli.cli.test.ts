@@ -9,7 +9,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("which-pm-runs", () => ({
   default: vi.fn(),
 }));
-vi.mock("./base.ts", () => ({
+vi.mock("./utils/detector.ts", () => ({
   detectByPackageJson: vi.fn(),
 }));
 
@@ -89,7 +89,7 @@ describe("pm-cli.cli", () => {
 
   describe("check-pm command", () => {
     it("should pass when package manager matches exactly", async () => {
-      const { detectByPackageJson } = await import("./base.ts");
+      const { detectByPackageJson } = await import("./utils/detector.ts");
       const whichPmRuns = (await import("which-pm-runs")).default;
 
       vi.mocked(detectByPackageJson).mockResolvedValue({
@@ -111,7 +111,7 @@ describe("pm-cli.cli", () => {
     });
 
     it("should pass with warning when package manager name matches but version differs", async () => {
-      const { detectByPackageJson } = await import("./base.ts");
+      const { detectByPackageJson } = await import("./utils/detector.ts");
       const whichPmRuns = (await import("which-pm-runs")).default;
 
       vi.mocked(detectByPackageJson).mockResolvedValue({
@@ -137,7 +137,7 @@ describe("pm-cli.cli", () => {
     });
 
     it("should pass when package manager name matches and no version specified", async () => {
-      const { detectByPackageJson } = await import("./base.ts");
+      const { detectByPackageJson } = await import("./utils/detector.ts");
       const whichPmRuns = (await import("which-pm-runs")).default;
 
       vi.mocked(detectByPackageJson).mockResolvedValue({ name: "npm" });
@@ -156,7 +156,7 @@ describe("pm-cli.cli", () => {
     });
 
     it("should exit with error when no package manager is configured", async () => {
-      const { detectByPackageJson } = await import("./base.ts");
+      const { detectByPackageJson } = await import("./utils/detector.ts");
 
       vi.mocked(detectByPackageJson).mockResolvedValue(undefined);
 
@@ -188,7 +188,7 @@ describe("pm-cli.cli", () => {
     });
 
     it("should exit with error when current package manager cannot be detected", async () => {
-      const { detectByPackageJson } = await import("./base.ts");
+      const { detectByPackageJson } = await import("./utils/detector.ts");
       const whichPmRuns = (await import("which-pm-runs")).default;
 
       vi.mocked(detectByPackageJson).mockResolvedValue({
@@ -216,7 +216,7 @@ describe("pm-cli.cli", () => {
     });
 
     it("should exit with error when package manager names don't match", async () => {
-      const { detectByPackageJson } = await import("./base.ts");
+      const { detectByPackageJson } = await import("./utils/detector.ts");
       const whichPmRuns = (await import("which-pm-runs")).default;
 
       vi.mocked(detectByPackageJson).mockResolvedValue({
@@ -249,7 +249,7 @@ describe("pm-cli.cli", () => {
     });
 
     it("should handle case when current package manager has no version", async () => {
-      const { detectByPackageJson } = await import("./base.ts");
+      const { detectByPackageJson } = await import("./utils/detector.ts");
       const whichPmRuns = (await import("which-pm-runs")).default;
 
       vi.mocked(detectByPackageJson).mockResolvedValue({
@@ -268,7 +268,7 @@ describe("pm-cli.cli", () => {
     });
 
     it("should handle case when expected package manager has no version", async () => {
-      const { detectByPackageJson } = await import("./base.ts");
+      const { detectByPackageJson } = await import("./utils/detector.ts");
       const whichPmRuns = (await import("which-pm-runs")).default;
 
       vi.mocked(detectByPackageJson).mockResolvedValue({ name: "yarn" });

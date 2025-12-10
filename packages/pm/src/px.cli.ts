@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import process from "node:process";
-import { detect, getMsg, run } from "./base.ts";
+import { getMsg, run } from "./base.ts";
+import { detect } from "./utils/detector.ts";
 
 const result = await detect();
 const args = process.argv.slice(2);

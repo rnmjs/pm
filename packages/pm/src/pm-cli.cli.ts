@@ -5,8 +5,8 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 import semver from "semver";
 import whichPmRuns from "which-pm-runs";
-import { detectByPackageJson } from "./base.ts";
 import { executorMap, type SupportedPm } from "./constants.ts";
+import { detectByPackageJson } from "./utils/detector.ts";
 
 await main();
 
