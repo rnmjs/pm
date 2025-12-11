@@ -33,7 +33,7 @@ async function getCommand(
 ) {
   const { name, version } = await getExecutingPmAndVersion(detectResult);
   const executor = execute ? executorMap[name] : name;
-  return [`${executor}@${version}`, ...args];
+  return [`${executor}@${version}`, ...args] as const;
 }
 
 export async function run(
@@ -81,17 +81,28 @@ export async function getMsg(
   args: string[],
   execute?: boolean,
 ) {
-  const { name, version } = await getExecutingPmAndVersion(detectResult);
-  const nameVer = `[${name}@${version}]`;
-  const info = detectResult ? "(detected)" : "(fallback)";
-
   const command = await getCommand(detectResult, args, execute);
-  command[0] &&= command[0].replace(/@.*$/, "");
+  const [name, version] = command[0].split("@");
+  // name and version must be string. If statement below is not needed, but it's for type safety.
+  if (!name || !version) {
+    throw new Error("Internal error: `name` or `version` not found.");
+  }
+  const pmName =
+    name in executorMap
+      ? name
+      : Object.fromEntries(Object.entries(executorMap).map(([k, v]) => [v, k]))[
+          name
+        ];
+  if (!pmName) {
+    throw new Error("Internal error: `pmName` not found.");
+  }
+  const nameVer = `[${pmName}@${version}]`;
+  const info = detectResult ? "(detected)" : "(fallback)";
   return [
     "📦",
     `${styleText("bold", nameVer)}${styleText("dim", info)}`,
     "➜",
-    styleText("blue", command.join(" ")),
+    styleText("blue", [name, ...command.slice(1)].join(" ")),
   ].join(" ");
 }
 

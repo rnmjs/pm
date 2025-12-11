@@ -15,9 +15,9 @@ A unified package manager for Node.js that supports `npm`, `yarn`, and `pnpm`. T
 - **🎯 Auto Detect**: Automatically detects the correct package manager.
 - **⬇️ Auto Fallback**: Automatically falls back to npm if no package manager is detected.
 - **🔀 Version Management**: Automatically switches to the proper version of the detected package manager.
-- **⚡️ Zero Configuration**: No configuration required. Just install globally and start using it.
-- **🌍 Global Safety**: Does not modify or override existing global package managers.
-- **🪶 Lightweight**: Tiny codebase (< 300 lines).
+- **⚡️ Zero Configuration**: No configuration required. Just install it globally and start using it.
+- **🌍 Global Safety**: Does not modify or override existing global package managers by default.
+- **🪶 Lightweight**: Tiny codebase (~ 400 lines).
 
 ## Installation
 
