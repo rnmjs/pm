@@ -19,7 +19,7 @@ const importPkgJson = async (p: string) =>
     }>(JSON.parse)
     .catch(() => undefined);
 
-export async function detectByPackageJson(
+async function detectByPackageJson(
   directory = process.cwd(),
 ): Promise<DetectResult | undefined> {
   const pkgJsonContent = await importPkgJson(

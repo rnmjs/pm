@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import semver from "semver";
 import whichPmRuns from "which-pm-runs";
 import { executorMap, type SupportedPm } from "./constants.ts";
-import { detectByPackageJson } from "./utils/detector.ts";
+import { detect } from "./utils/detector.ts";
 
 await main();
 
@@ -34,7 +34,7 @@ function help() {
 }
 
 async function checkPm(): Promise<void> {
-  const expectedPm = await detectByPackageJson();
+  const expectedPm = await detect();
   if (!expectedPm) {
     console.error(
       "❌ No package manager configured in package.json. Please configure a package manager using one of the following methods:",
@@ -58,6 +58,11 @@ async function checkPm(): Promise<void> {
     process.exit(1);
   }
 
+  if (!expectedPm.version) {
+    console.warn("⚠️  Unable to detect the package manager version");
+    process.exit(0);
+  }
+
   if (
     expectedPm.version &&
     currentPm.version &&
@@ -66,6 +71,7 @@ async function checkPm(): Promise<void> {
     console.warn("⚠️  Package manager version mismatch:");
     console.warn(`  Expected: ${expectedPm.name}@${expectedPm.version}`);
     console.warn(`  Current:  ${currentPm.name}@${currentPm.version}`);
+    process.exit(0);
   }
 }
 

@@ -10,7 +10,7 @@ vi.mock("which-pm-runs", () => ({
   default: vi.fn(),
 }));
 vi.mock("./utils/detector.ts", () => ({
-  detectByPackageJson: vi.fn(),
+  detect: vi.fn(),
 }));
 
 describe("pm-cli.cli", () => {
@@ -89,10 +89,10 @@ describe("pm-cli.cli", () => {
 
   describe("check-pm command", () => {
     it("should pass when package manager matches exactly", async () => {
-      const { detectByPackageJson } = await import("./utils/detector.ts");
+      const { detect } = await import("./utils/detector.ts");
       const whichPmRuns = (await import("which-pm-runs")).default;
 
-      vi.mocked(detectByPackageJson).mockResolvedValue({
+      vi.mocked(detect).mockResolvedValue({
         name: "pnpm",
         version: "10.15.1",
       });
@@ -111,10 +111,10 @@ describe("pm-cli.cli", () => {
     });
 
     it("should pass with warning when package manager name matches but version differs", async () => {
-      const { detectByPackageJson } = await import("./utils/detector.ts");
+      const { detect } = await import("./utils/detector.ts");
       const whichPmRuns = (await import("which-pm-runs")).default;
 
-      vi.mocked(detectByPackageJson).mockResolvedValue({
+      vi.mocked(detect).mockResolvedValue({
         name: "pnpm",
         version: "10.15.1",
       });
@@ -127,7 +127,7 @@ describe("pm-cli.cli", () => {
 
       await import("./pm-cli.cli.ts");
 
-      expect(mockExit).not.toHaveBeenCalled();
+      expect(mockExit).toHaveBeenCalledWith(0);
       expect(mockConsoleError).not.toHaveBeenCalled();
       expect(mockConsoleWarn).toHaveBeenCalledWith(
         "⚠️  Package manager version mismatch:",
@@ -137,10 +137,10 @@ describe("pm-cli.cli", () => {
     });
 
     it("should pass when package manager name matches and no version specified", async () => {
-      const { detectByPackageJson } = await import("./utils/detector.ts");
+      const { detect } = await import("./utils/detector.ts");
       const whichPmRuns = (await import("which-pm-runs")).default;
 
-      vi.mocked(detectByPackageJson).mockResolvedValue({ name: "npm" });
+      vi.mocked(detect).mockResolvedValue({ name: "npm" });
       vi.mocked(whichPmRuns).mockReturnValue({
         name: "npm",
         version: "10.8.2",
@@ -150,15 +150,17 @@ describe("pm-cli.cli", () => {
 
       await import("./pm-cli.cli.ts");
 
-      expect(mockExit).not.toHaveBeenCalled();
+      expect(mockExit).toHaveBeenCalledWith(0);
       expect(mockConsoleError).not.toHaveBeenCalled();
-      expect(mockConsoleWarn).not.toHaveBeenCalled();
+      expect(mockConsoleWarn).toHaveBeenCalledWith(
+        "⚠️  Unable to detect the package manager version",
+      );
     });
 
     it("should exit with error when no package manager is configured", async () => {
-      const { detectByPackageJson } = await import("./utils/detector.ts");
+      const { detect } = await import("./utils/detector.ts");
 
-      vi.mocked(detectByPackageJson).mockResolvedValue(undefined);
+      vi.mocked(detect).mockResolvedValue(undefined);
 
       process.argv = ["node", "pm-cli.cli.ts", "check-pm"];
 
@@ -188,10 +190,10 @@ describe("pm-cli.cli", () => {
     });
 
     it("should exit with error when current package manager cannot be detected", async () => {
-      const { detectByPackageJson } = await import("./utils/detector.ts");
+      const { detect } = await import("./utils/detector.ts");
       const whichPmRuns = (await import("which-pm-runs")).default;
 
-      vi.mocked(detectByPackageJson).mockResolvedValue({
+      vi.mocked(detect).mockResolvedValue({
         name: "pnpm",
         version: "10.15.1",
       });
@@ -216,10 +218,10 @@ describe("pm-cli.cli", () => {
     });
 
     it("should exit with error when package manager names don't match", async () => {
-      const { detectByPackageJson } = await import("./utils/detector.ts");
+      const { detect } = await import("./utils/detector.ts");
       const whichPmRuns = (await import("which-pm-runs")).default;
 
-      vi.mocked(detectByPackageJson).mockResolvedValue({
+      vi.mocked(detect).mockResolvedValue({
         name: "pnpm",
         version: "10.15.1",
       });
@@ -249,10 +251,10 @@ describe("pm-cli.cli", () => {
     });
 
     it("should handle case when current package manager has no version", async () => {
-      const { detectByPackageJson } = await import("./utils/detector.ts");
+      const { detect } = await import("./utils/detector.ts");
       const whichPmRuns = (await import("which-pm-runs")).default;
 
-      vi.mocked(detectByPackageJson).mockResolvedValue({
+      vi.mocked(detect).mockResolvedValue({
         name: "yarn",
         version: "1.22.22",
       });
@@ -268,10 +270,10 @@ describe("pm-cli.cli", () => {
     });
 
     it("should handle case when expected package manager has no version", async () => {
-      const { detectByPackageJson } = await import("./utils/detector.ts");
+      const { detect } = await import("./utils/detector.ts");
       const whichPmRuns = (await import("which-pm-runs")).default;
 
-      vi.mocked(detectByPackageJson).mockResolvedValue({ name: "yarn" });
+      vi.mocked(detect).mockResolvedValue({ name: "yarn" });
       vi.mocked(whichPmRuns).mockReturnValue({
         name: "yarn",
         version: "1.22.22",
@@ -281,9 +283,11 @@ describe("pm-cli.cli", () => {
 
       await import("./pm-cli.cli.ts");
 
-      expect(mockExit).not.toHaveBeenCalled();
+      expect(mockExit).toHaveBeenCalledWith(0);
       expect(mockConsoleError).not.toHaveBeenCalled();
-      expect(mockConsoleWarn).not.toHaveBeenCalled();
+      expect(mockConsoleWarn).toHaveBeenCalledWith(
+        "⚠️  Unable to detect the package manager version",
+      );
     });
   });
 
