@@ -14,7 +14,7 @@
     "test": "pnpm style && pnpm -r test"
   },
   "devDependencies": {
-    "@changesets/cli": "2.29.7",
+    "@changesets/cli": "2.29.8",
     "@rnm/tscx": "0.3.10",
     "fenge": "0.12.4",
     "typescript": "5.9.3"
@@ -29,7 +29,7 @@
     },
     "packageManager": {
       "name": "pnpm",
-      "version": "10.15.1"
+      "version": "10.23.0"
     }
   }
 }

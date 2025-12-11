@@ -31,7 +31,7 @@
     "test": "tsc --noEmit && vitest run --coverage --coverage.reporter=json-summary --coverage.reporter=html && make-coverage-badge --output-path badge/coverage.svg"
   },
   "dependencies": {
-    "corepack": "0.34.4",
+    "corepack": "0.34.5",
     "find-up-simple": "1.0.1",
     "registry-url": "7.2.0",
     "semver": "7.7.3",
@@ -41,9 +41,9 @@
     "@types/node": "20.12.14",
     "@types/semver": "7.7.1",
     "@types/which-pm-runs": "1.0.2",
-    "@vitest/coverage-v8": "4.0.10",
+    "@vitest/coverage-v8": "4.0.15",
     "make-coverage-badge": "1.2.0",
-    "vitest": "4.0.10"
+    "vitest": "4.0.15"
   },
   "engines": {
     "node": ">=20.12.0"

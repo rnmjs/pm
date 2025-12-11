@@ -10,7 +10,7 @@ export const executorMap = {
  * The version will increase along with dependency corepack upgrade.
  */
 export const defaultVersions = {
-  npm: "11.6.2",
+  npm: "11.6.3",
   yarn: "1.22.22",
-  pnpm: "10.22.0",
+  pnpm: "10.23.0",
 } as const satisfies Record<SupportedPm, string>;
