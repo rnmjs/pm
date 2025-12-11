@@ -57,6 +57,28 @@ async function detectByPackageJson(
   return await detectByPackageJson(parent);
 }
 
+async function detectByLockFile(
+  directory = process.cwd(),
+): Promise<DetectResult | undefined> {
+  const locks = (
+    await Promise.all([
+      findUp("package-lock.json", { cwd: directory }),
+      findUp("yarn.lock", { cwd: directory }),
+      findUp("pnpm-lock.yaml", { cwd: directory }),
+    ])
+  ).filter((p) => p !== undefined);
+
+  if (locks.length > 1) {
+    throw new Error("Multiple lock files found. Please remove one of them.");
+  }
+
+  if (locks[0]?.endsWith("package-lock.json")) return { name: "npm" };
+  if (locks[0]?.endsWith("yarn.lock")) return { name: "yarn" };
+  if (locks[0]?.endsWith("pnpm-lock.yaml")) return { name: "pnpm" };
+
+  return undefined;
+}
+
 /**
  * Detects the package manager used in the specified directory.
  * @param directory - The absolute path to the directory to check.
@@ -70,23 +92,9 @@ export async function detect(
     return undefined;
   }
 
-  // 1. detect pm by package.json
-  const pm = await detectByPackageJson(path.dirname(pkgJsonPath));
-  if (pm) return pm;
-
-  // 2. detect pm by lock files
-  const locks = (
-    await Promise.all([
-      findUp("package-lock.json", { cwd: directory }),
-      findUp("yarn.lock", { cwd: directory }),
-      findUp("pnpm-lock.yaml", { cwd: directory }),
-    ])
-  ).filter((p) => p !== undefined);
-  if (locks.length > 1) {
-    throw new Error("Multiple lock files found. Please remove one of them.");
-  }
-  if (locks[0]?.endsWith("package-lock.json")) return { name: "npm" };
-  if (locks[0]?.endsWith("yarn.lock")) return { name: "yarn" };
-  if (locks[0]?.endsWith("pnpm-lock.yaml")) return { name: "pnpm" };
-  return undefined;
+  // detect pm by package.json or lock files
+  return (
+    (await detectByPackageJson(path.dirname(pkgJsonPath))) ??
+    (await detectByLockFile(directory))
+  );
 }
