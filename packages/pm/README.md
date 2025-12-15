@@ -97,8 +97,8 @@ This command creates symbolic links in your global installation directory, so wh
 ## Differences from Corepack
 
 1. **Field Detection**: `@rnm/pm` detects `packageManager`, `devEngines`, and `engines` fields in `package.json`, while Corepack only supports `packageManager` and `devEngines`.
-2. **Version Range Support**: `@rnm/pm` supports version ranges (e.g., `^10.0.0`) in `packageManager` and `devEngines.packageManager.version` fields, while Corepack only accepts specific versions.
-3. **Lock File Detection**: `@rnm/pm` automatically detects lock files (`package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`) to determine the package manager, while Corepack does not.
+2. **Lock File Detection**: `@rnm/pm` automatically detects lock files (`package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`) to determine the package manager, while Corepack does not.
+3. **Version Range Support**: `@rnm/pm` supports version ranges (e.g., `^10.0.0`) in `packageManager` and `devEngines.packageManager.version` fields, while Corepack only accepts specific versions.
 4. **Environment Variables**: `@rnm/pm` ignores `COREPACK_*` environment variables for non-configurable behavior, while Corepack respects them.
 5. **Configuration Files**: `@rnm/pm` ignores `.corepack.env` files, while Corepack reads them for configuration.
 6. **Registry Configuration**: `@rnm/pm` uses `npm config get registry` for package installation, while Corepack uses the `COREPACK_NPM_REGISTRY` environment variable.
