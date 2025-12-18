@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.5.3
+
+### Patch Changes
+
+- 5e21fe5: chore: upgrade deps
+
 ## 0.5.2
 
 ### Patch Changes
