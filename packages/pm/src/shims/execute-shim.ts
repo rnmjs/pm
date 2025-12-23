@@ -1,5 +1,6 @@
 import { styleText } from "node:util";
 import { run } from "../base.ts";
+import { getPackageJson } from "../common.ts";
 import { executorMap, type SupportedPm } from "../constants.ts";
 import { detect } from "../utils/detector.ts";
 
@@ -22,7 +23,7 @@ export async function executeShim(
   console.warn(
     styleText(
       "dim",
-      `⚠️ You are using '${runningCommand}', which is a shim created by '@rnm/pm'. We recommend that you always use the '${recommendedCommand}' command directly, rather than '${runningCommand}'.`,
+      `⚠️ You are using '${runningCommand}', which is a shim created by '@rnm/pm' (v${(await getPackageJson()).version}). We recommend that you always use the '${recommendedCommand}' command directly, rather than '${runningCommand}'.`,
     ),
   );
   return await run(

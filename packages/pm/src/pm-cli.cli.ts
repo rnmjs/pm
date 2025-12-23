@@ -5,6 +5,7 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 import semver from "semver";
 import whichPmRuns from "which-pm-runs";
+import { getPackageJson } from "./common.ts";
 import { executorMap, type SupportedPm } from "./constants.ts";
 import { detect } from "./utils/detector.ts";
 
@@ -118,15 +119,6 @@ async function enableShim(): Promise<void> {
 }
 
 async function version() {
-  const packageJson = JSON.parse(
-    await fs.readFile(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "package.json",
-      ),
-      "utf8",
-    ),
-  );
+  const packageJson = await getPackageJson();
   console.log(packageJson.version);
 }
