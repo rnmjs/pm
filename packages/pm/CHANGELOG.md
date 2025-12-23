@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.5.4
+
+### Patch Changes
+
+- 351f92f: chore: add version info when calling npm/yarn/pnpm
+
 ## 0.5.3
 
 ### Patch Changes
