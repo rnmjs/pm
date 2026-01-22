@@ -16,11 +16,8 @@
   "devDependencies": {
     "@changesets/cli": "2.29.8",
     "@rnm/tscx": "0.3.10",
-    "fenge": "0.12.4",
+    "fenge": "0.12.11",
     "typescript": "5.9.3"
-  },
-  "engines": {
-    "node": ">=22.19.0"
   },
   "devEngines": {
     "runtime": {
@@ -29,7 +26,7 @@
     },
     "packageManager": {
       "name": "pnpm",
-      "version": "10.23.0"
+      "version": "10.28.1"
     }
   }
 }

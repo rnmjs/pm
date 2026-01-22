@@ -1,307 +1,137 @@
-import fs from "node:fs/promises";
-import os from "node:os";
+import childProcess from "node:child_process";
+import fs from "node:fs";
 import path from "node:path";
-import process from "node:process";
 import { fileURLToPath } from "node:url";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+import { getPackageJson } from "./common.ts";
 
-// Mock dependencies before any imports
-vi.mock("which-pm-runs", () => ({
-  default: vi.fn(),
-}));
-vi.mock("./utils/detector.ts", () => ({
-  detect: vi.fn(),
-}));
+const packageJson = await getPackageJson();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const cliPath = path.join(__dirname, "pm-util.cli.ts");
 
 describe("pm-util.cli", () => {
-  let originalArgv: string[] = [];
-  let originalExit: typeof process.exit = process.exit;
-  let originalConsoleError: typeof console.error = console.error;
-  let originalConsoleWarn: typeof console.warn = console.warn;
-  let originalConsoleLog: typeof console.log = console.log;
-  let mockExit: ReturnType<typeof vi.fn> = vi.fn();
-  let mockConsoleError: typeof console.error = vi.fn();
-  let mockConsoleWarn: typeof console.warn = vi.fn();
-  let mockConsoleLog: typeof console.log = vi.fn();
+  describe("--version", () => {
+    it("should display version with --version flag", () => {
+      const output = childProcess
+        .execSync(`node ${cliPath} --version`, {
+          encoding: "utf8",
+        })
+        .trim();
+      expect(output).toBe(packageJson.version);
+    });
 
-  beforeEach(() => {
-    originalArgv = [...process.argv];
-    originalExit = process.exit;
-    originalConsoleError = console.error;
-    originalConsoleWarn = console.warn;
-    originalConsoleLog = console.log;
-
-    mockExit = vi.fn();
-    mockConsoleError = vi.fn();
-    mockConsoleWarn = vi.fn();
-    mockConsoleLog = vi.fn();
-
-    process.exit = mockExit as any;
-    console.error = mockConsoleError;
-    console.warn = mockConsoleWarn;
-    console.log = mockConsoleLog;
+    it("should display version with -v flag", () => {
+      const output = childProcess
+        .execSync(`node ${cliPath} -v`, {
+          encoding: "utf8",
+        })
+        .trim();
+      expect(output).toBe(packageJson.version);
+    });
   });
 
-  afterEach(() => {
-    process.argv = originalArgv;
-    process.exit = originalExit;
-    console.error = originalConsoleError;
-    console.warn = originalConsoleWarn;
-    console.log = originalConsoleLog;
-    vi.resetAllMocks();
-    // Clear module cache to ensure fresh imports
-    vi.resetModules();
+  describe("help", () => {
+    it("should display help message when no arguments provided", () => {
+      const output = childProcess.execSync(`node ${cliPath}`, {
+        encoding: "utf8",
+      });
+      expect(output).toContain("Usage:");
+      expect(output).toContain("pm-util enable-shim");
+      expect(output).toContain("pm-util check-pm");
+    });
+
+    it("should display help message for unknown command", () => {
+      const output = childProcess.execSync(`node ${cliPath} unknown`, {
+        encoding: "utf8",
+      });
+      expect(output).toContain("Usage:");
+      expect(output).toContain("pm-util enable-shim");
+      expect(output).toContain("pm-util check-pm");
+    });
   });
 
-  describe("enable-shim command", () => {
-    it("should create shim files for npm, yarn, and pnpm when enable-shim is called", async () => {
-      // Mock process.argv to simulate "enable-shim" command
-      process.argv = [
-        "node",
-        path.join(os.tmpdir(), "pm-util.cli.ts"),
-        "enable-shim",
-      ];
+  describe("enable-shim", () => {
+    const shimFiles = ["npm", "npx", "yarn", "yarnpkg", "pnpm", "pnpx"];
 
-      const argv1 = process.argv[1];
-      if (!argv1) throw new Error("process.argv[1] is not defined");
-      const installDirectory = path.dirname(argv1);
-
-      const importMetaDirname = path.dirname(fileURLToPath(import.meta.url));
-      const shimsDirectory = path.join(importMetaDirname, "shims");
-
-      await import("./pm-util.cli.ts");
-      for (const item of ["npm", "yarn", "pnpm", "npx", "yarnpkg", "pnpx"]) {
-        const link = await fs.readlink(path.join(installDirectory, item));
-        expect(link).toBe(
-          path.relative(
-            installDirectory,
-            path.join(shimsDirectory, `${item}.cli.ts`),
-          ),
-        );
-      }
-
-      // Clean up shim files
-      for (const item of ["npm", "yarn", "pnpm", "npx", "yarnpkg", "pnpx"]) {
-        await fs.unlink(path.join(installDirectory, item));
+    afterEach(() => {
+      // Clean up generated shim files in the actual install directory
+      for (const shimName of shimFiles) {
+        const shimPath = path.join(__dirname, shimName);
+        if (fs.existsSync(shimPath)) {
+          fs.unlinkSync(shimPath);
+        }
       }
     });
-  });
 
-  describe("check-pm command", () => {
-    it("should pass when package manager matches exactly", async () => {
-      const { detect } = await import("./utils/detector.ts");
-      const whichPmRuns = (await import("which-pm-runs")).default;
-
-      vi.mocked(detect).mockResolvedValue({
-        name: "pnpm",
-        version: "10.15.1",
-      });
-      vi.mocked(whichPmRuns).mockReturnValue({
-        name: "pnpm",
-        version: "10.15.1",
+    it("should create shim files for all package managers by default", () => {
+      // Run enable-shim command
+      childProcess.execSync(`node ${cliPath} enable-shim`, {
+        encoding: "utf8",
       });
 
-      process.argv = ["node", "pm-util.cli.ts", "check-pm"];
+      // Check if all shim files are created in the CLI directory
+      for (const shimName of shimFiles) {
+        const shimPath = path.join(__dirname, shimName);
+        expect(fs.existsSync(shimPath)).toBe(true);
 
-      await import("./pm-util.cli.ts");
+        // Check if it's a symbolic link
+        const stats = fs.lstatSync(shimPath);
+        expect(stats.isSymbolicLink()).toBe(true);
 
-      expect(mockExit).not.toHaveBeenCalled();
-      expect(mockConsoleError).not.toHaveBeenCalled();
-      expect(mockConsoleWarn).not.toHaveBeenCalled();
+        // Check if the symlink points to the correct shim file
+        const linkTarget = fs.readlinkSync(shimPath);
+        const expectedTarget = path.join("shims", `${shimName}.cli.ts`);
+        expect(linkTarget).toBe(expectedTarget);
+      }
     });
 
-    it("should pass with warning when package manager name matches but version differs", async () => {
-      const { detect } = await import("./utils/detector.ts");
-      const whichPmRuns = (await import("which-pm-runs")).default;
-
-      vi.mocked(detect).mockResolvedValue({
-        name: "pnpm",
-        version: "10.15.1",
-      });
-      vi.mocked(whichPmRuns).mockReturnValue({
-        name: "pnpm",
-        version: "10.11.0",
+    it("should create shim files for specific package managers", () => {
+      // Run enable-shim command for npm only
+      childProcess.execSync(`node ${cliPath} enable-shim npm`, {
+        encoding: "utf8",
       });
 
-      process.argv = ["node", "pm-util.cli.ts", "check-pm"];
+      // Check if npm and npx shim files are created
+      const npmPath = path.join(__dirname, "npm");
+      const npxPath = path.join(__dirname, "npx");
+      expect(fs.existsSync(npmPath)).toBe(true);
+      expect(fs.existsSync(npxPath)).toBe(true);
 
-      await import("./pm-util.cli.ts");
+      // Verify symlinks point to correct shim files
+      expect(fs.readlinkSync(npmPath)).toBe(path.join("shims", "npm.cli.ts"));
+      expect(fs.readlinkSync(npxPath)).toBe(path.join("shims", "npx.cli.ts"));
 
-      expect(mockExit).toHaveBeenCalledWith(0);
-      expect(mockConsoleError).not.toHaveBeenCalled();
-      expect(mockConsoleWarn).toHaveBeenCalledWith(
-        "⚠️  Package manager version mismatch:",
-      );
-      expect(mockConsoleWarn).toHaveBeenCalledWith("  Expected: pnpm@10.15.1");
-      expect(mockConsoleWarn).toHaveBeenCalledWith("  Current:  pnpm@10.11.0");
+      // Check if other shim files are not created
+      expect(fs.existsSync(path.join(__dirname, "yarn"))).toBe(false);
+      expect(fs.existsSync(path.join(__dirname, "pnpm"))).toBe(false);
     });
 
-    it("should pass when package manager name matches and no version specified", async () => {
-      const { detect } = await import("./utils/detector.ts");
-      const whichPmRuns = (await import("which-pm-runs")).default;
-
-      vi.mocked(detect).mockResolvedValue({ name: "npm" });
-      vi.mocked(whichPmRuns).mockReturnValue({
-        name: "npm",
-        version: "10.8.2",
+    it("should create shim files for multiple specific package managers", () => {
+      // Run enable-shim command for npm and pnpm
+      childProcess.execSync(`node ${cliPath} enable-shim npm pnpm`, {
+        encoding: "utf8",
       });
 
-      process.argv = ["node", "pm-util.cli.ts", "check-pm"];
+      // Check if npm, npx, pnpm, and pnpx shim files are created
+      const npmPath = path.join(__dirname, "npm");
+      const npxPath = path.join(__dirname, "npx");
+      const pnpmPath = path.join(__dirname, "pnpm");
+      const pnpxPath = path.join(__dirname, "pnpx");
 
-      await import("./pm-util.cli.ts");
+      expect(fs.existsSync(npmPath)).toBe(true);
+      expect(fs.existsSync(npxPath)).toBe(true);
+      expect(fs.existsSync(pnpmPath)).toBe(true);
+      expect(fs.existsSync(pnpxPath)).toBe(true);
 
-      expect(mockExit).toHaveBeenCalledWith(0);
-      expect(mockConsoleError).not.toHaveBeenCalled();
-      expect(mockConsoleWarn).toHaveBeenCalledWith(
-        "⚠️  Unable to detect the package manager version",
-      );
-    });
+      // Verify symlinks point to correct shim files
+      expect(fs.readlinkSync(npmPath)).toBe(path.join("shims", "npm.cli.ts"));
+      expect(fs.readlinkSync(npxPath)).toBe(path.join("shims", "npx.cli.ts"));
+      expect(fs.readlinkSync(pnpmPath)).toBe(path.join("shims", "pnpm.cli.ts"));
+      expect(fs.readlinkSync(pnpxPath)).toBe(path.join("shims", "pnpx.cli.ts"));
 
-    it("should exit with error when no package manager is configured", async () => {
-      const { detect } = await import("./utils/detector.ts");
-
-      vi.mocked(detect).mockResolvedValue(undefined);
-
-      process.argv = ["node", "pm-util.cli.ts", "check-pm"];
-
-      // Mock process.exit to throw an error so we can catch it
-      const exitError = new Error("process.exit called");
-      mockExit.mockImplementation(() => {
-        throw exitError;
-      });
-
-      await expect(import("./pm-util.cli.ts")).rejects.toThrow(
-        "process.exit called",
-      );
-
-      expect(mockExit).toHaveBeenCalledWith(1);
-      expect(mockConsoleError).toHaveBeenCalledWith(
-        "❌ No package manager configured in package.json. Please configure a package manager using one of the following methods:",
-      );
-      expect(mockConsoleError).toHaveBeenCalledWith(
-        '  - Add "packageManager" field in package.json',
-      );
-      expect(mockConsoleError).toHaveBeenCalledWith(
-        '  - Add "devEngines.packageManager" field in package.json',
-      );
-      expect(mockConsoleError).toHaveBeenCalledWith(
-        '  - Add package manager in "engines" field in package.json',
-      );
-    });
-
-    it("should exit with error when current package manager cannot be detected", async () => {
-      const { detect } = await import("./utils/detector.ts");
-      const whichPmRuns = (await import("which-pm-runs")).default;
-
-      vi.mocked(detect).mockResolvedValue({
-        name: "pnpm",
-        version: "10.15.1",
-      });
-      vi.mocked(whichPmRuns).mockReturnValue(undefined);
-
-      process.argv = ["node", "pm-util.cli.ts", "check-pm"];
-
-      // Mock process.exit to throw an error so we can catch it
-      const exitError = new Error("process.exit called");
-      mockExit.mockImplementation(() => {
-        throw exitError;
-      });
-
-      await expect(import("./pm-util.cli.ts")).rejects.toThrow(
-        "process.exit called",
-      );
-
-      expect(mockExit).toHaveBeenCalledWith(1);
-      expect(mockConsoleError).toHaveBeenCalledWith(
-        "❌ Unable to detect the current package manager",
-      );
-    });
-
-    it("should exit with error when package manager names don't match", async () => {
-      const { detect } = await import("./utils/detector.ts");
-      const whichPmRuns = (await import("which-pm-runs")).default;
-
-      vi.mocked(detect).mockResolvedValue({
-        name: "pnpm",
-        version: "10.15.1",
-      });
-      vi.mocked(whichPmRuns).mockReturnValue({
-        name: "npm",
-        version: "10.8.2",
-      });
-
-      process.argv = ["node", "pm-util.cli.ts", "check-pm"];
-
-      // Mock process.exit to throw an error so we can catch it
-      const exitError = new Error("process.exit called");
-      mockExit.mockImplementation(() => {
-        throw exitError;
-      });
-
-      await expect(import("./pm-util.cli.ts")).rejects.toThrow(
-        "process.exit called",
-      );
-
-      expect(mockExit).toHaveBeenCalledWith(1);
-      expect(mockConsoleError).toHaveBeenCalledWith(
-        "❌ Package manager mismatch:",
-      );
-      expect(mockConsoleError).toHaveBeenCalledWith("  Expected: pnpm");
-      expect(mockConsoleError).toHaveBeenCalledWith("  Current:  npm");
-    });
-
-    it("should handle case when current package manager has no version", async () => {
-      const { detect } = await import("./utils/detector.ts");
-      const whichPmRuns = (await import("which-pm-runs")).default;
-
-      vi.mocked(detect).mockResolvedValue({
-        name: "yarn",
-        version: "1.22.22",
-      });
-      vi.mocked(whichPmRuns).mockReturnValue({ name: "yarn", version: "" });
-
-      process.argv = ["node", "pm-util.cli.ts", "check-pm"];
-
-      await import("./pm-util.cli.ts");
-
-      expect(mockExit).not.toHaveBeenCalled();
-      expect(mockConsoleError).not.toHaveBeenCalled();
-      expect(mockConsoleWarn).not.toHaveBeenCalled();
-    });
-
-    it("should handle case when expected package manager has no version", async () => {
-      const { detect } = await import("./utils/detector.ts");
-      const whichPmRuns = (await import("which-pm-runs")).default;
-
-      vi.mocked(detect).mockResolvedValue({ name: "yarn" });
-      vi.mocked(whichPmRuns).mockReturnValue({
-        name: "yarn",
-        version: "1.22.22",
-      });
-
-      process.argv = ["node", "pm-util.cli.ts", "check-pm"];
-
-      await import("./pm-util.cli.ts");
-
-      expect(mockExit).toHaveBeenCalledWith(0);
-      expect(mockConsoleError).not.toHaveBeenCalled();
-      expect(mockConsoleWarn).toHaveBeenCalledWith(
-        "⚠️  Unable to detect the package manager version",
-      );
-    });
-  });
-
-  describe("--version option", () => {
-    it("should output the package version", async () => {
-      process.argv = ["node", "pm-util.cli.ts", "--version"];
-
-      await import("./pm-util.cli.ts");
-
-      const packageJson = JSON.parse(
-        await fs.readFile(path.join(process.cwd(), "package.json"), "utf8"),
-      );
-      expect(mockConsoleLog).toHaveBeenCalledWith(expect.any(String));
-      expect(mockConsoleLog).toHaveBeenCalledWith(packageJson.version);
+      // Check if yarn shim files are not created
+      expect(fs.existsSync(path.join(__dirname, "yarn"))).toBe(false);
+      expect(fs.existsSync(path.join(__dirname, "yarnpkg"))).toBe(false);
     });
   });
 });

@@ -303,7 +303,7 @@ describe("base", () => {
           "dist",
           "corepack.js",
         ),
-        "pnpm@10.23.0",
+        "pnpm@10.28.1",
         "--help",
       ]);
       expect(call[2]).toBeInstanceOf(Object);

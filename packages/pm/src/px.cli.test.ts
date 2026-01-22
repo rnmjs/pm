@@ -8,12 +8,13 @@ describe("px.cli", () => {
   const logMock = vi.spyOn(console, "log").mockImplementationOnce(() => true);
   it("should work for `-v` option", async () => {
     process.argv.push("@rnm/pm", "-v");
+    // eslint-disable-next-line esm/no-cli-imports -- for test
     await import("./px.cli.ts");
     expect(exitMock).toBeCalledTimes(1);
     expect(exitMock).toBeCalledWith(0);
     expect(logMock).toBeCalledTimes(1);
     expect(logMock).toBeCalledWith(
-      "📦 [pnpm@10.23.0](detected) ➜ pnpx @rnm/pm -v",
+      "📦 [pnpm@10.28.1](detected) ➜ pnpx @rnm/pm -v",
     );
     process.argv.splice(-2);
   });
