@@ -75,19 +75,19 @@ px degit user/repo my-app                   # → npx degit user/repo my-app
 
 ## Advanced Usage
 
-The `pm-cli` command provides additional utilities for advanced use cases.
+The `pm-util` command provides additional utilities for advanced use cases.
 
 #### Enable Shim Commands
 
-Use `pm-cli enable-shim` to create symbolic links that replace the native package manager commands with `@rnm/pm` equivalents:
+Use `pm-util enable-shim` to create symbolic links that replace the native package manager commands with `@rnm/pm` equivalents:
 
 ```bash
 # Enable shims for all package managers (npm, yarn, pnpm, npx, yarnpkg, pnpx)
-pm-cli enable-shim
+pm-util enable-shim
 
 # Enable shims for specific package managers only
-pm-cli enable-shim npm yarn
-pm-cli enable-shim pnpm
+pm-util enable-shim npm yarn
+pm-util enable-shim pnpm
 ```
 
 This command creates symbolic links in your global installation directory, so when you run `npm`, `yarn`, or `pnpm`, they will automatically use the `@rnm/pm` detection logic.

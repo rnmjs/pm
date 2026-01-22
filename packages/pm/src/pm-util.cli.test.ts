@@ -13,7 +13,7 @@ vi.mock("./utils/detector.ts", () => ({
   detect: vi.fn(),
 }));
 
-describe("pm-cli.cli", () => {
+describe("pm-util.cli", () => {
   let originalArgv: string[] = [];
   let originalExit: typeof process.exit = process.exit;
   let originalConsoleError: typeof console.error = console.error;
@@ -58,7 +58,7 @@ describe("pm-cli.cli", () => {
       // Mock process.argv to simulate "enable-shim" command
       process.argv = [
         "node",
-        path.join(os.tmpdir(), "pm-cli.cli.ts"),
+        path.join(os.tmpdir(), "pm-util.cli.ts"),
         "enable-shim",
       ];
 
@@ -69,7 +69,7 @@ describe("pm-cli.cli", () => {
       const importMetaDirname = path.dirname(fileURLToPath(import.meta.url));
       const shimsDirectory = path.join(importMetaDirname, "shims");
 
-      await import("./pm-cli.cli.ts");
+      await import("./pm-util.cli.ts");
       for (const item of ["npm", "yarn", "pnpm", "npx", "yarnpkg", "pnpx"]) {
         const link = await fs.readlink(path.join(installDirectory, item));
         expect(link).toBe(
@@ -101,9 +101,9 @@ describe("pm-cli.cli", () => {
         version: "10.15.1",
       });
 
-      process.argv = ["node", "pm-cli.cli.ts", "check-pm"];
+      process.argv = ["node", "pm-util.cli.ts", "check-pm"];
 
-      await import("./pm-cli.cli.ts");
+      await import("./pm-util.cli.ts");
 
       expect(mockExit).not.toHaveBeenCalled();
       expect(mockConsoleError).not.toHaveBeenCalled();
@@ -123,9 +123,9 @@ describe("pm-cli.cli", () => {
         version: "10.11.0",
       });
 
-      process.argv = ["node", "pm-cli.cli.ts", "check-pm"];
+      process.argv = ["node", "pm-util.cli.ts", "check-pm"];
 
-      await import("./pm-cli.cli.ts");
+      await import("./pm-util.cli.ts");
 
       expect(mockExit).toHaveBeenCalledWith(0);
       expect(mockConsoleError).not.toHaveBeenCalled();
@@ -146,9 +146,9 @@ describe("pm-cli.cli", () => {
         version: "10.8.2",
       });
 
-      process.argv = ["node", "pm-cli.cli.ts", "check-pm"];
+      process.argv = ["node", "pm-util.cli.ts", "check-pm"];
 
-      await import("./pm-cli.cli.ts");
+      await import("./pm-util.cli.ts");
 
       expect(mockExit).toHaveBeenCalledWith(0);
       expect(mockConsoleError).not.toHaveBeenCalled();
@@ -162,7 +162,7 @@ describe("pm-cli.cli", () => {
 
       vi.mocked(detect).mockResolvedValue(undefined);
 
-      process.argv = ["node", "pm-cli.cli.ts", "check-pm"];
+      process.argv = ["node", "pm-util.cli.ts", "check-pm"];
 
       // Mock process.exit to throw an error so we can catch it
       const exitError = new Error("process.exit called");
@@ -170,7 +170,7 @@ describe("pm-cli.cli", () => {
         throw exitError;
       });
 
-      await expect(import("./pm-cli.cli.ts")).rejects.toThrow(
+      await expect(import("./pm-util.cli.ts")).rejects.toThrow(
         "process.exit called",
       );
 
@@ -199,7 +199,7 @@ describe("pm-cli.cli", () => {
       });
       vi.mocked(whichPmRuns).mockReturnValue(undefined);
 
-      process.argv = ["node", "pm-cli.cli.ts", "check-pm"];
+      process.argv = ["node", "pm-util.cli.ts", "check-pm"];
 
       // Mock process.exit to throw an error so we can catch it
       const exitError = new Error("process.exit called");
@@ -207,7 +207,7 @@ describe("pm-cli.cli", () => {
         throw exitError;
       });
 
-      await expect(import("./pm-cli.cli.ts")).rejects.toThrow(
+      await expect(import("./pm-util.cli.ts")).rejects.toThrow(
         "process.exit called",
       );
 
@@ -230,7 +230,7 @@ describe("pm-cli.cli", () => {
         version: "10.8.2",
       });
 
-      process.argv = ["node", "pm-cli.cli.ts", "check-pm"];
+      process.argv = ["node", "pm-util.cli.ts", "check-pm"];
 
       // Mock process.exit to throw an error so we can catch it
       const exitError = new Error("process.exit called");
@@ -238,7 +238,7 @@ describe("pm-cli.cli", () => {
         throw exitError;
       });
 
-      await expect(import("./pm-cli.cli.ts")).rejects.toThrow(
+      await expect(import("./pm-util.cli.ts")).rejects.toThrow(
         "process.exit called",
       );
 
@@ -260,9 +260,9 @@ describe("pm-cli.cli", () => {
       });
       vi.mocked(whichPmRuns).mockReturnValue({ name: "yarn", version: "" });
 
-      process.argv = ["node", "pm-cli.cli.ts", "check-pm"];
+      process.argv = ["node", "pm-util.cli.ts", "check-pm"];
 
-      await import("./pm-cli.cli.ts");
+      await import("./pm-util.cli.ts");
 
       expect(mockExit).not.toHaveBeenCalled();
       expect(mockConsoleError).not.toHaveBeenCalled();
@@ -279,9 +279,9 @@ describe("pm-cli.cli", () => {
         version: "1.22.22",
       });
 
-      process.argv = ["node", "pm-cli.cli.ts", "check-pm"];
+      process.argv = ["node", "pm-util.cli.ts", "check-pm"];
 
-      await import("./pm-cli.cli.ts");
+      await import("./pm-util.cli.ts");
 
       expect(mockExit).toHaveBeenCalledWith(0);
       expect(mockConsoleError).not.toHaveBeenCalled();
@@ -293,9 +293,9 @@ describe("pm-cli.cli", () => {
 
   describe("--version option", () => {
     it("should output the package version", async () => {
-      process.argv = ["node", "pm-cli.cli.ts", "--version"];
+      process.argv = ["node", "pm-util.cli.ts", "--version"];
 
-      await import("./pm-cli.cli.ts");
+      await import("./pm-util.cli.ts");
 
       const packageJson = JSON.parse(
         await fs.readFile(path.join(process.cwd(), "package.json"), "utf8"),

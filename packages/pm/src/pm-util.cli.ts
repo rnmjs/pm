@@ -30,8 +30,8 @@ async function main(): Promise<void> {
 
 function help() {
   console.log("Usage:");
-  console.log("  pm-cli enable-shim [npm] [yarn] [pnpm]");
-  console.log("  pm-cli check-pm");
+  console.log("  pm-util enable-shim [npm] [yarn] [pnpm]");
+  console.log("  pm-util check-pm");
 }
 
 async function checkPm(): Promise<void> {

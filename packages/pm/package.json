@@ -20,7 +20,7 @@
   "type": "module",
   "bin": {
     "pm": "./dist/pm.cli.js",
-    "pm-cli": "./dist/pm-cli.cli.js",
+    "pm-util": "./dist/pm-util.cli.js",
     "px": "./dist/px.cli.js"
   },
   "files": [
