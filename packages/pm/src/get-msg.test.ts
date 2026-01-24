@@ -1,13 +1,15 @@
 import { styleText } from "node:util";
 import { describe, expect, it } from "vitest";
 import { getMsg } from "./base.ts";
+import { getPackageJson } from "./common.ts";
 import { defaultVersions } from "./constants.ts";
 
 describe("get-msg", () => {
   it("should get return npm by default", async () => {
     const msg = await getMsg(undefined, ["foo"]);
+    const packageJson = await getPackageJson();
     expect(msg).toBe(
-      `📦 ${styleText("bold", `[npm@${defaultVersions.npm}]`)}${styleText("dim", "(fallback)")} ➜ ${styleText("blue", "npm foo")}`,
+      `📦 ${styleText("bold", `[npm@${defaultVersions.npm}]`)}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "npm foo")}`,
     );
   });
 });

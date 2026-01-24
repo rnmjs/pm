@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { styleText } from "node:util";
 import corepackPkgJson from "corepack/package.json" with { type: "json" };
 import semver from "semver";
+import { getPackageJson } from "./common.ts";
 import { defaultVersions, executorMap, type SupportedPm } from "./constants.ts";
 import type { DetectResult } from "./utils/detector.ts";
 import { fetchPmVersions } from "./utils/fetch-pm-versions.ts";
@@ -97,7 +98,8 @@ export async function getMsg(
     throw new Error("Internal error: `pmName` not found.");
   }
   const nameVer = `[${pmName}@${version}]`;
-  const info = detectResult ? "(detected)" : "(fallback)";
+  const packageJson = await getPackageJson();
+  const info = `(pm@${packageJson.version})`;
   return [
     "📦",
     `${styleText("bold", nameVer)}${styleText("dim", info)}`,

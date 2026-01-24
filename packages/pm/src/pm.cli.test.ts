@@ -1,5 +1,6 @@
 import process from "node:process";
 import { describe, expect, it, vi } from "vitest";
+import { getPackageJson } from "./common.ts";
 
 describe("pm.cli", () => {
   const exitMock = vi
@@ -10,10 +11,13 @@ describe("pm.cli", () => {
     process.argv.push("-v");
     // eslint-disable-next-line esm/no-cli-imports -- for test
     await import("./pm.cli.ts");
+    const packageJson = await getPackageJson();
     expect(exitMock).toBeCalledTimes(1);
     expect(exitMock).toBeCalledWith(0);
     expect(logMock).toBeCalledTimes(1);
-    expect(logMock).toBeCalledWith("📦 [pnpm@10.28.1](detected) ➜ pnpm -v");
+    expect(logMock).toBeCalledWith(
+      `📦 [pnpm@10.28.1](pm@${packageJson.version}) ➜ pnpm -v`,
+    );
     process.argv.pop();
   });
 });
