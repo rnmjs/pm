@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.6.1
+
+### Patch Changes
+
+- 2c2d58d: feat: disallow falling back to npm for projects without specified package manager
+
 ## 0.6.0
 
 ### Minor Changes
