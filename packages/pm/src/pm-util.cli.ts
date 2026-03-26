@@ -32,6 +32,12 @@ function help() {
   console.log("Usage:");
   console.log("  pm-util enable-shim [npm] [yarn] [pnpm]");
   console.log("  pm-util check-pm");
+  console.log("");
+  console.log("Commands:");
+  console.log("  enable-shim: Enable shims for npm, yarn, and pnpm");
+  console.log(
+    "  check-pm: Check if the running package manager is correct for the current project",
+  );
 }
 
 async function checkPm(): Promise<void> {
