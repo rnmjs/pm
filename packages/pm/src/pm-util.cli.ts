@@ -35,6 +35,12 @@ function help() {
 }
 
 async function checkPm(): Promise<void> {
+  const currentPm = whichPmRuns();
+  if (!currentPm) {
+    console.error("❌ Unable to detect the current package manager");
+    process.exit(1);
+  }
+
   const expectedPm = await detect();
   if (!expectedPm) {
     console.error(
@@ -43,12 +49,6 @@ async function checkPm(): Promise<void> {
     console.error('  - Add "packageManager" field in package.json');
     console.error('  - Add "devEngines.packageManager" field in package.json');
     console.error('  - Add package manager in "engines" field in package.json');
-    process.exit(1);
-  }
-
-  const currentPm = whichPmRuns();
-  if (!currentPm) {
-    console.error("❌ Unable to detect the current package manager");
     process.exit(1);
   }
 
