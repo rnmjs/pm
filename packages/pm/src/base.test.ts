@@ -249,7 +249,7 @@ describe("base", () => {
 
     const result = detect();
 
-    await expect(result).rejects.toThrowError(
+    await expect(result).rejects.toThrow(
       /^Multiple lock files found. Please remove one of them\.$/,
     );
     expect(childProcess.spawn).toHaveBeenCalledTimes(0);

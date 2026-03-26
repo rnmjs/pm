@@ -12,10 +12,10 @@ describe("px.cli", () => {
     // eslint-disable-next-line esm/no-cli-imports -- for test
     await import("./px.cli.ts");
     const packageJson = await getPackageJson();
-    expect(exitMock).toBeCalledTimes(1);
-    expect(exitMock).toBeCalledWith(0);
-    expect(logMock).toBeCalledTimes(1);
-    expect(logMock).toBeCalledWith(
+    expect(exitMock).toHaveBeenCalledTimes(1);
+    expect(exitMock).toHaveBeenCalledWith(0);
+    expect(logMock).toHaveBeenCalledTimes(1);
+    expect(logMock).toHaveBeenCalledWith(
       `📦 [pnpm@10.28.1](pm@${packageJson.version}) ➜ pnpx @rnm/pm -v`,
     );
     process.argv.splice(-2);
