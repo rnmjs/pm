@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.6.2
+
+### Patch Changes
+
+- cece2a6: feat: add more helping info for `pm-util` command
+
 ## 0.6.1
 
 ### Patch Changes
