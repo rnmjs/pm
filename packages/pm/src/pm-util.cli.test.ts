@@ -36,8 +36,9 @@ describe("pm-util.cli", () => {
         encoding: "utf8",
       });
       expect(output).toContain("Usage:");
-      expect(output).toContain("pm-util enable-shim");
-      expect(output).toContain("pm-util check-pm");
+      expect(output).toContain("pm-util <command> [options]");
+      expect(output).toContain("enable-shim [npm] [yarn] [pnpm]");
+      expect(output).toContain("check-pm");
     });
 
     it("should display help message for unknown command", () => {
@@ -45,8 +46,9 @@ describe("pm-util.cli", () => {
         encoding: "utf8",
       });
       expect(output).toContain("Usage:");
-      expect(output).toContain("pm-util enable-shim");
-      expect(output).toContain("pm-util check-pm");
+      expect(output).toContain("pm-util <command> [options]");
+      expect(output).toContain("enable-shim [npm] [yarn] [pnpm]");
+      expect(output).toContain("check-pm");
     });
   });
 
