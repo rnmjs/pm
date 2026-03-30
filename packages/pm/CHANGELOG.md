@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.6.4
+
+### Patch Changes
+
+- 82c3c47: chore: optimize the warning message
+
 ## 0.6.3
 
 ### Patch Changes
