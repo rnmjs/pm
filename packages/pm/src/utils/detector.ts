@@ -25,7 +25,7 @@ function printWarn(pm: SupportedPm, field: "packageManager" | "engines") {
   console.warn(
     styleText(
       "dim",
-      `⚠️ Package manager "${pm}" was detected via the "${field}" field in package.json. Add a "devEngines.packageManager" field to your root package.json to explicitly pin the package manager and its version.`,
+      `⚠️  Package manager "${pm}" was detected via the "${field}" field in package.json. To dismiss this warning, add a "devEngines.packageManager" field to your root package.json to explicitly pin the package manager and its version.`,
     ),
   );
 }
