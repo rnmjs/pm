@@ -19,6 +19,7 @@
   "author": "hellozmj@qq.com",
   "type": "module",
   "bin": {
+    "corepack": "./dist/corepack.cli.js",
     "pm": "./dist/pm.cli.js",
     "pm-util": "./dist/pm-util.cli.js",
     "px": "./dist/px.cli.js"

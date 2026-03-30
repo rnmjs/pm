@@ -17,7 +17,7 @@ import { registryUrl } from "./utils/registry-url.ts";
 /**
  * @returns Absolute path to corepack binary.
  */
-function getCorepackPath(): string {
+export function getCorepackPath(): string {
   const corepackPkgJsonPath = fileURLToPath(
     import.meta.resolve("corepack/package.json"),
   );
