@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
+import { styleText } from "node:util";
 import { findUp } from "find-up-simple";
 import type { SupportedPm } from "../constants.ts";
 
@@ -18,6 +19,16 @@ const importPkgJson = async (p: string) =>
       devEngines?: { packageManager?: { name?: string; version?: string } };
     }>(JSON.parse)
     .catch(() => undefined);
+
+function printWarn(pm: SupportedPm, field: "packageManager" | "engines") {
+  // eslint-disable-next-line no-console -- Temporary add console here. We will finally drop support for `packageManager` and `engines` field.
+  console.warn(
+    styleText(
+      "dim",
+      `⚠️ Package manager "${pm}" was detected via the "${field}" field in package.json. Add a "devEngines.packageManager" field to your root package.json to explicitly pin the package manager and its version.`,
+    ),
+  );
+}
 
 async function detectByPackageJson(
   directory = process.cwd(),
@@ -43,14 +54,24 @@ async function detectByPackageJson(
     packageManager === "pnpm"
   ) {
     const version = rest?.split("+")[0];
+    printWarn(packageManager, "packageManager");
     return { name: packageManager, ...(version && { version }) };
   }
 
   // 3. detect pm by `engines` filed
   // Note: Corepack does not support `engines` field. So the result doesn't include the version. See https://github.com/nodejs/corepack/issues/694.
-  if (pkgJsonContent?.engines?.["npm"]) return { name: "npm" };
-  if (pkgJsonContent?.engines?.["yarn"]) return { name: "yarn" };
-  if (pkgJsonContent?.engines?.["pnpm"]) return { name: "pnpm" };
+  if (pkgJsonContent?.engines?.["npm"]) {
+    printWarn("npm", "engines");
+    return { name: "npm" };
+  }
+  if (pkgJsonContent?.engines?.["yarn"]) {
+    printWarn("yarn", "engines");
+    return { name: "yarn" };
+  }
+  if (pkgJsonContent?.engines?.["pnpm"]) {
+    printWarn("pnpm", "engines");
+    return { name: "pnpm" };
+  }
 
   const parent = path.dirname(directory);
   if (directory === parent) return undefined;
