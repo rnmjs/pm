@@ -1,5 +1,12 @@
 # @rnm/pm
 
+## 0.6.4-beta.0
+
+### Patch Changes
+
+- 82c3c47: chore: optimize the warning message
+- 20ac13f: feat: expose corepack cli
+
 ## 0.6.3
 
 ### Patch Changes
