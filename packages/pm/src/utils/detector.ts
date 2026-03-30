@@ -26,7 +26,15 @@ async function detectByPackageJson(
     path.join(directory, "package.json"),
   );
 
-  // 1. detect pm by `packageManager` field
+  // 1. detect pm by `devEngines` filed
+  const { name, version: devEnginesVer } =
+    pkgJsonContent?.devEngines?.packageManager ?? {};
+  if (name === "npm" || name === "yarn" || name === "pnpm") {
+    const version = devEnginesVer?.split("+")[0];
+    return { name, ...(version && { version }) };
+  }
+
+  // 2. detect pm by `packageManager` field
   const [packageManager, rest] =
     pkgJsonContent?.packageManager?.split("@") ?? [];
   if (
@@ -36,14 +44,6 @@ async function detectByPackageJson(
   ) {
     const version = rest?.split("+")[0];
     return { name: packageManager, ...(version && { version }) };
-  }
-
-  // 2. detect pm by `devEngines` filed
-  const { name, version: devEnginesVer } =
-    pkgJsonContent?.devEngines?.packageManager ?? {};
-  if (name === "npm" || name === "yarn" || name === "pnpm") {
-    const version = devEnginesVer?.split("+")[0];
-    return { name, ...(version && { version }) };
   }
 
   // 3. detect pm by `engines` filed
