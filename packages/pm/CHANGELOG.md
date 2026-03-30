@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.6.3
+
+### Patch Changes
+
+- 6b8c98d: Print a warning when the package manager is detected via the `packageManager` or `engines` field, suggesting to use `devEngines` instead.
+
 ## 0.6.2
 
 ### Patch Changes
