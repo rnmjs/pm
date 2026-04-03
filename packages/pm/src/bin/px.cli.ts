@@ -1,8 +1,6 @@
 #!/usr/bin/env node
 import process from "node:process";
-import { getMsg, run } from "./base.ts";
-import { detect } from "./utils/detector.ts";
-import { isProject } from "./utils/is-project.ts";
+import { detect, getMsg, isProject, run } from "../index.ts";
 
 const result = await detect();
 if (!result && (await isProject(process.cwd()))) {

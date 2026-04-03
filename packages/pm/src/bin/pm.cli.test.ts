@@ -1,6 +1,6 @@
 import process from "node:process";
 import { describe, expect, it, vi } from "vitest";
-import { getPackageJson } from "./common.ts";
+import { getPackageJson } from "../common.ts";
 
 describe("pm.cli", () => {
   const exitMock = vi

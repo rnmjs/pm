@@ -1,0 +1,23 @@
+// @ts-check
+import { Builder } from "fenge/eslint-config";
+
+export default new Builder()
+  .enableAll()
+  .append({
+    files: ["packages/pm/src/bin/*.cli.ts"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              regex: "^(?!\\.{1,2}/|node:)",
+              message:
+                "Only relative imports and node: built-in imports are allowed in CLI entry files.",
+            },
+          ],
+        },
+      ],
+    },
+  })
+  .toConfig();

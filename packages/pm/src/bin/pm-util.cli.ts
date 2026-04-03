@@ -3,11 +3,14 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
-import semver from "semver";
-import whichPmRuns from "which-pm-runs";
-import { getPackageJson } from "./common.ts";
-import { executorMap, type SupportedPm } from "./constants.ts";
-import { detect } from "./utils/detector.ts";
+import {
+  detect,
+  executorMap,
+  getPackageJson,
+  semver,
+  whichPmRuns,
+  type SupportedPm,
+} from "../index.ts";
 
 await main();
 
@@ -110,7 +113,7 @@ async function enableShim(): Promise<void> {
   // 2. Get shimsDirectory
   const importMetaFile = fileURLToPath(import.meta.url);
   const importMetaDirname = path.dirname(importMetaFile);
-  const shimsDirectory = path.join(importMetaDirname, "shims");
+  const shimsDirectory = path.join(importMetaDirname, "..", "shims");
 
   // 3. Get extension
   const extension = path.extname(importMetaFile);

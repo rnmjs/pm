@@ -19,9 +19,9 @@
   "author": "hellozmj@qq.com",
   "type": "module",
   "bin": {
-    "pm": "./dist/pm.cli.js",
-    "pm-util": "./dist/pm-util.cli.js",
-    "px": "./dist/px.cli.js"
+    "pm": "./dist/bin/pm.cli.js",
+    "pm-util": "./dist/bin/pm-util.cli.js",
+    "px": "./dist/bin/px.cli.js"
   },
   "files": [
     "dist"

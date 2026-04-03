@@ -40,7 +40,7 @@ describe("version", () => {
 
   it("should print version twice for pm", () => {
     const version = childProcess.execSync(
-      `${process.execPath} ${path.join(process.cwd(), "src", "pm.cli.ts")} -v`,
+      `${process.execPath} ${path.join(process.cwd(), "src", "bin", "pm.cli.ts")} -v`,
       { cwd: process.env["HOME"], encoding: "utf8" },
     );
     expect(version.split(defaultVersions.npm).length).toBe(3);

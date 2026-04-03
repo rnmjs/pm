@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
-import { getPackageJson } from "./common.ts";
+import { getPackageJson } from "../common.ts";
 
 const packageJson = await getPackageJson();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -82,7 +82,7 @@ describe("pm-util.cli", () => {
 
         // Check if the symlink points to the correct shim file
         const linkTarget = fs.readlinkSync(shimPath);
-        const expectedTarget = path.join("shims", `${shimName}.cli.ts`);
+        const expectedTarget = path.join("..", "shims", `${shimName}.cli.ts`);
         expect(linkTarget).toBe(expectedTarget);
       }
     });
@@ -100,8 +100,12 @@ describe("pm-util.cli", () => {
       expect(fs.existsSync(npxPath)).toBe(true);
 
       // Verify symlinks point to correct shim files
-      expect(fs.readlinkSync(npmPath)).toBe(path.join("shims", "npm.cli.ts"));
-      expect(fs.readlinkSync(npxPath)).toBe(path.join("shims", "npx.cli.ts"));
+      expect(fs.readlinkSync(npmPath)).toBe(
+        path.join("..", "shims", "npm.cli.ts"),
+      );
+      expect(fs.readlinkSync(npxPath)).toBe(
+        path.join("..", "shims", "npx.cli.ts"),
+      );
 
       // Check if other shim files are not created
       expect(fs.existsSync(path.join(__dirname, "yarn"))).toBe(false);
@@ -126,10 +130,18 @@ describe("pm-util.cli", () => {
       expect(fs.existsSync(pnpxPath)).toBe(true);
 
       // Verify symlinks point to correct shim files
-      expect(fs.readlinkSync(npmPath)).toBe(path.join("shims", "npm.cli.ts"));
-      expect(fs.readlinkSync(npxPath)).toBe(path.join("shims", "npx.cli.ts"));
-      expect(fs.readlinkSync(pnpmPath)).toBe(path.join("shims", "pnpm.cli.ts"));
-      expect(fs.readlinkSync(pnpxPath)).toBe(path.join("shims", "pnpx.cli.ts"));
+      expect(fs.readlinkSync(npmPath)).toBe(
+        path.join("..", "shims", "npm.cli.ts"),
+      );
+      expect(fs.readlinkSync(npxPath)).toBe(
+        path.join("..", "shims", "npx.cli.ts"),
+      );
+      expect(fs.readlinkSync(pnpmPath)).toBe(
+        path.join("..", "shims", "pnpm.cli.ts"),
+      );
+      expect(fs.readlinkSync(pnpxPath)).toBe(
+        path.join("..", "shims", "pnpx.cli.ts"),
+      );
 
       // Check if yarn shim files are not created
       expect(fs.existsSync(path.join(__dirname, "yarn"))).toBe(false);
