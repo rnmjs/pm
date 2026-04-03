@@ -20,4 +20,10 @@ export default new Builder()
       ],
     },
   })
+  .append({
+    files: ["**/*.{js,ts}"],
+    rules: {
+      "esm/no-phantom-dep-imports": ["error", { allowDevDependencies: true }],
+    },
+  })
   .toConfig();

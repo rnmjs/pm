@@ -27,23 +27,24 @@
     "dist"
   ],
   "scripts": {
-    "build": "tscx --include src --exclude '**/*.test.ts'",
+    "build": "node build.cli.ts",
     "test": "tsc --noEmit && vitest run --coverage --coverage.reporter=json-summary --coverage.reporter=html && make-coverage-badge --output-path badge/coverage.svg"
   },
   "dependencies": {
-    "corepack": "0.34.6",
-    "find-up-simple": "1.0.1",
-    "registry-url": "7.2.0",
-    "semver": "7.7.4",
-    "which-pm-runs": "1.1.0"
+    "corepack": "0.34.6"
   },
   "devDependencies": {
     "@types/node": "20.12.14",
     "@types/semver": "7.7.1",
     "@types/which-pm-runs": "1.0.2",
     "@vitest/coverage-v8": "4.1.2",
+    "esbuild": "0.28.0",
+    "find-up-simple": "1.0.1",
     "make-coverage-badge": "1.2.0",
-    "vitest": "4.1.2"
+    "registry-url": "7.2.0",
+    "semver": "7.7.4",
+    "vitest": "4.1.2",
+    "which-pm-runs": "1.1.0"
   },
   "engines": {
     "node": ">=20.12.0"
