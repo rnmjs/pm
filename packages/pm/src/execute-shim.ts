@@ -1,8 +1,8 @@
 import { styleText } from "node:util";
-import { run } from "../base.ts";
-import { getPackageJson } from "../common.ts";
-import { executorMap, type SupportedPm } from "../constants.ts";
-import { detect } from "../utils/detector.ts";
+import { run } from "./base.ts";
+import { getPackageJson } from "./common.ts";
+import { executorMap, type SupportedPm } from "./constants.ts";
+import { detect } from "./utils/detector.ts";
 
 export async function executeShim(
   pm: SupportedPm,
