@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.6.5
+
+### Patch Changes
+
+- 2ef6503: refactor: replace tscx build with esbuild for faster bundling and move runtime dependencies into devDependencies
+
 ## 0.6.4
 
 ### Patch Changes
