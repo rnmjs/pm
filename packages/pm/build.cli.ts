@@ -3,9 +3,7 @@ import { build } from "esbuild";
 import pkgJson from "./package.json" with { type: "json" };
 
 await build({
-  entryPoints: Object.values(pkgJson.bin).map((entry) =>
-    entry.replace(/^\.\/dist\/(.+)\.js$/, "src/$1.ts"),
-  ),
+  entryPoints: ["src/bin/*.cli.ts", "src/shims/*.cli.ts"],
   bundle: true,
   platform: "node",
   target: "esnext",
