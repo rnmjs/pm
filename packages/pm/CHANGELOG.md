@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.6.6
+
+### Patch Changes
+
+- 42beed9: fix: add shims directory as build entry points so pm-util enable-shim command works correctly
+
 ## 0.6.5
 
 ### Patch Changes
