@@ -22,7 +22,7 @@ export async function fetchPmVersions(pm: SupportedPm): Promise<string[]> {
   if (cached) return cached;
   const versions = [
     ...(await runFetch(pm)),
-    ...(pm === "yarn" ? await runFetch("@yarnpkg/cli") : []),
+    ...(pm === "yarn" ? await runFetch("@yarnpkg/cli-dist") : []),
   ];
   cache.set(pm, versions);
   return versions;
