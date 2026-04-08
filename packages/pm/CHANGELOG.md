@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.6.7
+
+### Patch Changes
+
+- de049cc: fix: use correct berry package for yarn
+
 ## 0.6.6
 
 ### Patch Changes
