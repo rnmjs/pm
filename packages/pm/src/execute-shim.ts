@@ -23,7 +23,7 @@ export async function executeShim(
   console.warn(
     styleText(
       "dim",
-      `⚠️ You are using '${runningCommand}', which is a shim created by '@rnm/pm' (v${(await getPackageJson()).version}). We recommend that you always use the '${recommendedCommand}' command directly, rather than '${runningCommand}'.`,
+      `⚠️ You are using '${runningCommand}', which is a shim created by '@rnm/pm' (v${getPackageJson().version}). We recommend that you always use the '${recommendedCommand}' command directly, rather than '${runningCommand}'.`,
     ),
   );
   return await run(

@@ -64,7 +64,7 @@ describe("fetch-pm-versions", () => {
     expect(versions).toEqual(["6.0.0", "7.0.0", "8.0.0"]);
   });
 
-  it("should fetch yarn versions with @yarnpkg/cli versions", async () => {
+  it("should fetch yarn versions with @yarnpkg/cli-dist versions", async () => {
     const mockYarnVersions = {
       versions: {
         "1.22.0": {},
@@ -96,7 +96,7 @@ describe("fetch-pm-versions", () => {
     );
     expect(mockFetch).toHaveBeenNthCalledWith(
       2,
-      "https://registry.npmjs.org/@yarnpkg/cli",
+      "https://registry.npmjs.org/@yarnpkg/cli-dist",
     );
     expect(versions).toEqual(["1.22.0", "1.22.1", "3.0.0", "4.0.0"]);
   });

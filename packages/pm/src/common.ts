@@ -1,17 +1,6 @@
-import fs from "node:fs/promises";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+// eslint-disable-next-line esm/no-external-src-imports -- JSON import needed to read package.json at runtime
+import packageJson from "../package.json" with { type: "json" };
 
-export async function getPackageJson() {
-  const packageJson: { name: string; version: string } = JSON.parse(
-    await fs.readFile(
-      path.join(
-        path.dirname(fileURLToPath(import.meta.url)),
-        "..",
-        "package.json",
-      ),
-      "utf8",
-    ),
-  );
+export function getPackageJson() {
   return packageJson;
 }

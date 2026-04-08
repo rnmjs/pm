@@ -7,7 +7,7 @@ import { defaultVersions } from "./constants.ts";
 describe("get-msg", () => {
   it("should get return npm by default", async () => {
     const msg = await getMsg(undefined, ["foo"]);
-    const packageJson = await getPackageJson();
+    const packageJson = getPackageJson();
     expect(msg).toBe(
       `📦 ${styleText("bold", `[npm@${defaultVersions.npm}]`)}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "npm foo")}`,
     );

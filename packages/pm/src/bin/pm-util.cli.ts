@@ -24,7 +24,7 @@ async function main(): Promise<void> {
       break;
     case "-v":
     case "--version":
-      await version();
+      version();
       break;
     default:
       help();
@@ -132,7 +132,7 @@ async function enableShim(): Promise<void> {
   }
 }
 
-async function version() {
-  const packageJson = await getPackageJson();
+function version() {
+  const packageJson = getPackageJson();
   console.log(packageJson.version);
 }

@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import { getPackageJson } from "../common.ts";
 
-const packageJson = await getPackageJson();
+const packageJson = getPackageJson();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const cliPath = path.join(__dirname, "pm-util.cli.ts");
 

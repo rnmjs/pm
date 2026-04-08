@@ -98,7 +98,7 @@ export async function getMsg(
     throw new Error("Internal error: `pmName` not found.");
   }
   const nameVer = `[${pmName}@${version}]`;
-  const packageJson = await getPackageJson();
+  const packageJson = getPackageJson();
   const info = `(pm@${packageJson.version})`;
   return [
     "📦",
