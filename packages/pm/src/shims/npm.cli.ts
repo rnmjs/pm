@@ -2,4 +2,9 @@
 import process from "node:process";
 import { executeShim } from "../index.ts";
 
-process.exit(await executeShim("npm", process.argv.slice(2)));
+process.exit(
+  await executeShim("npm", process.argv.slice(2)).catch((e: unknown) => {
+    console.error(e);
+    return 1;
+  }),
+);
