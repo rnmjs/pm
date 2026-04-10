@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.6.8
+
+### Patch Changes
+
+- 702c1a6: fix: add error handling to package manager shim entry points
+
 ## 0.6.7
 
 ### Patch Changes
