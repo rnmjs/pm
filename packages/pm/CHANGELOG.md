@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.6.9
+
+### Patch Changes
+
+- 33149a0: feat: support JRM_MULTISHELL_PATH env vars for jrm compatibility
+
 ## 0.6.8
 
 ### Patch Changes
