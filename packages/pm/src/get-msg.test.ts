@@ -1,9 +1,16 @@
+import process from "node:process";
 import { styleText } from "node:util";
-import { describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { getMsg } from "./base.ts";
 import { getPackageJson } from "./common.ts";
 import { defaultVersions } from "./constants.ts";
 import { detect } from "./utils/detector.ts";
+
+const envKeys = {
+  npm: "JRM_MULTISHELL_PATH_OF_NPM",
+  yarn: "JRM_MULTISHELL_PATH_OF_YARN",
+  pnpm: "JRM_MULTISHELL_PATH_OF_PNPM",
+};
 
 describe("get-msg", () => {
   describe("corepack format ['/path/to/corepack', 'npm@11.0.0', '-v']", () => {
@@ -76,8 +83,6 @@ describe("get-msg", () => {
     });
 
     it("should throw when internal error occurs", async () => {
-      // This tests the type safety check in getMsg.
-      // It's hard to trigger without deep mocking, but we can verify the happy path doesn't throw.
       const msg = await getMsg(undefined, ["--version"]);
       expect(typeof msg).toBe("string");
       const packageJson = getPackageJson();
@@ -88,11 +93,120 @@ describe("get-msg", () => {
   });
 
   describe("direct format ['npm', '-v']", () => {
-    // Currently getMsg always calls getCommand which returns the corepack format.
-    // The direct format branch is for future use when getCommand may return ['npm', '-v'] directly.
-    // This block is reserved for future tests when that happens.
-    it("is reserved for future use when getCommand returns direct format", () => {
-      // placeholder
+    describe("npm", () => {
+      const envKey = envKeys.npm;
+
+      beforeAll(() => {
+        process.env[envKey] = "1";
+      });
+
+      afterAll(() => {
+        Reflect.deleteProperty(process.env, envKey);
+      });
+
+      it("should return [npm] without version when env is set", async () => {
+        const msg = await getMsg(undefined, ["foo"]);
+        const packageJson = getPackageJson();
+        expect(msg).toBe(
+          `📦 ${styleText("bold", "[npm]")}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "npm foo")}`,
+        );
+      });
+
+      it("should use executor (npx) when execute is true", async () => {
+        const msg = await getMsg(undefined, ["--version"], true);
+        const packageJson = getPackageJson();
+        expect(msg).toBe(
+          `📦 ${styleText("bold", "[npx]")}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "npx --version")}`,
+        );
+      });
+    });
+
+    describe("pnpm", () => {
+      const envKey = envKeys.pnpm;
+
+      beforeAll(() => {
+        process.env[envKey] = "1";
+      });
+
+      afterAll(() => {
+        Reflect.deleteProperty(process.env, envKey);
+      });
+
+      it("should return [pnpm] without version when env is set", async () => {
+        const msg = await getMsg({ name: "pnpm", version: "8.0.0" }, [
+          "install",
+        ]);
+        const packageJson = getPackageJson();
+        expect(msg).toBe(
+          `📦 ${styleText("bold", "[pnpm]")}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "pnpm install")}`,
+        );
+      });
+
+      it("should use executor (pnpx) when execute is true", async () => {
+        const msg = await getMsg(
+          { name: "pnpm", version: "8.0.0" },
+          ["create", "my-app"],
+          true,
+        );
+        const packageJson = getPackageJson();
+        expect(msg).toBe(
+          `📦 ${styleText("bold", "[pnpx]")}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "pnpx create my-app")}`,
+        );
+      });
+    });
+
+    describe("yarn", () => {
+      const envKey = envKeys.yarn;
+
+      beforeAll(() => {
+        process.env[envKey] = "1";
+      });
+
+      afterAll(() => {
+        Reflect.deleteProperty(process.env, envKey);
+      });
+
+      it("should return [yarn] without version when env is set", async () => {
+        const msg = await getMsg({ name: "yarn", version: "4.0.0" }, [
+          "add",
+          "lodash",
+        ]);
+        const packageJson = getPackageJson();
+        expect(msg).toBe(
+          `📦 ${styleText("bold", "[yarn]")}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "yarn add lodash")}`,
+        );
+      });
+
+      it("should use executor (yarnpkg) when execute is true", async () => {
+        const msg = await getMsg(
+          { name: "yarn", version: "4.0.0" },
+          ["add", "lodash"],
+          true,
+        );
+        const packageJson = getPackageJson();
+        expect(msg).toBe(
+          `📦 ${styleText("bold", "[yarnpkg]")}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "yarnpkg add lodash")}`,
+        );
+      });
+    });
+
+    describe("env should match detected pm, fallback to corepack format", () => {
+      beforeAll(() => {
+        process.env[envKeys.npm] = "1";
+      });
+
+      afterAll(() => {
+        Reflect.deleteProperty(process.env, envKeys.npm);
+      });
+
+      it("should use corepack format when env does not match detected pm", async () => {
+        // JRM_MULTISHELL_PATH_OF_NPM is set, but detectResult is pnpm
+        // So direct format is NOT triggered, corepack format is used
+        const msg = await getMsg({ name: "pnpm", version: "8.0.0" }, [
+          "install",
+        ]);
+        expect(msg).toContain("[pnpm@8.0.0]");
+      });
     });
   });
 });

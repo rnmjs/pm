@@ -32,6 +32,16 @@ async function getCommand(
   args: string[],
   execute?: boolean,
 ) {
+  const pm = detectResult?.name ?? "npm";
+  if (
+    (process.env["JRM_MULTISHELL_PATH_OF_NPM"] && pm === "npm") ||
+    (process.env["JRM_MULTISHELL_PATH_OF_YARN"] && pm === "yarn") ||
+    (process.env["JRM_MULTISHELL_PATH_OF_PNPM"] && pm === "pnpm")
+  ) {
+    const executor = execute ? executorMap[pm] : pm;
+    return [executor, ...args] as const;
+  }
+
   const { name, version } = await getExecutingPmAndVersion(detectResult);
   const executor = execute ? executorMap[name] : name;
   return [getCorepackPath(), `${executor}@${version}`, ...args] as const;
