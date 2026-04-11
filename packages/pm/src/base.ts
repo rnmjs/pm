@@ -77,28 +77,45 @@ export async function getMsg(
   execute?: boolean,
 ) {
   const command = await getCommand(detectResult, args, execute);
-  const [name, version] = command[1].split("@");
-  // name and version must be string. If statement below is not needed, but it's for type safety.
-  if (!name || !version) {
-    throw new Error("Internal error: `name` or `version` not found.");
-  }
-  const pmName =
-    name in executorMap
-      ? name
-      : Object.fromEntries(Object.entries(executorMap).map(([k, v]) => [v, k]))[
-          name
-        ];
-  if (!pmName) {
-    throw new Error("Internal error: `pmName` not found.");
-  }
-  const nameVer = `[${pmName}@${version}]`;
   const packageJson = getPackageJson();
   const info = `(pm@${packageJson.version})`;
+
+  // command format: ['/path/to/corepack', 'npm@11.0.0', '-v']
+  // or: ['npm', '-v']
+  const isCorepackFormat = command[0] === getCorepackPath();
+
+  if (isCorepackFormat) {
+    const [name, version] = command[1].split("@");
+    if (!name || !version) {
+      throw new Error("Internal error: `name` or `version` not found.");
+    }
+    const pmName =
+      name in executorMap
+        ? name
+        : Object.fromEntries(
+            Object.entries(executorMap).map(([k, v]) => [v, k]),
+          )[name];
+    if (!pmName) {
+      throw new Error("Internal error: `pmName` not found.");
+    }
+    return [
+      "📦",
+      `${styleText("bold", `[${pmName}@${version}]`)}${styleText("dim", info)}`,
+      "➜",
+      styleText("blue", [name, ...command.slice(2)].join(" ")),
+    ].join(" ");
+  }
+
+  // Direct format: ['npm', '-v']
+  const name = command[0];
+  if (!name) {
+    throw new Error("Internal error: `name` not found.");
+  }
   return [
     "📦",
-    `${styleText("bold", nameVer)}${styleText("dim", info)}`,
+    `${styleText("bold", `[${name}]`)}${styleText("dim", info)}`,
     "➜",
-    styleText("blue", [name, ...command.slice(2)].join(" ")),
+    styleText("blue", command.join(" ")),
   ].join(" ");
 }
 
