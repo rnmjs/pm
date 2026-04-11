@@ -34,7 +34,7 @@ async function getCommand(
 ) {
   const { name, version } = await getExecutingPmAndVersion(detectResult);
   const executor = execute ? executorMap[name] : name;
-  return [`${executor}@${version}`, ...args] as const;
+  return [getCorepackPath(), `${executor}@${version}`, ...args] as const;
 }
 
 export async function run(
@@ -43,23 +43,17 @@ export async function run(
   execute?: boolean,
 ): Promise<number> {
   const command = await getCommand(detectResult, args, execute);
-  const cp = childProcess.spawn(
-    process.execPath,
-    [getCorepackPath(), ...command],
-    {
-      stdio: "inherit",
-      env: {
-        COREPACK_DEFAULT_TO_LATEST: "0",
-        COREPACK_ENV_FILE: "0",
-        COREPACK_NPM_REGISTRY: registryUrl(), // TODO: Remove this env when https://github.com/nodejs/corepack/issues/540 is resolved.
-        ...Object.fromEntries(
-          Object.entries(process.env).filter(
-            ([k]) => !k.startsWith("COREPACK_"),
-          ),
-        ),
-      },
+  const cp = childProcess.spawn(process.execPath, command, {
+    stdio: "inherit",
+    env: {
+      COREPACK_DEFAULT_TO_LATEST: "0",
+      COREPACK_ENV_FILE: "0",
+      COREPACK_NPM_REGISTRY: registryUrl(), // TODO: Remove this env when https://github.com/nodejs/corepack/issues/540 is resolved.
+      ...Object.fromEntries(
+        Object.entries(process.env).filter(([k]) => !k.startsWith("COREPACK_")),
+      ),
     },
-  );
+  });
 
   const listener = (signal: NodeJS.Signals) => !cp.killed && cp.kill(signal);
   process.on("SIGINT", listener);
@@ -83,7 +77,7 @@ export async function getMsg(
   execute?: boolean,
 ) {
   const command = await getCommand(detectResult, args, execute);
-  const [name, version] = command[0].split("@");
+  const [name, version] = command[1].split("@");
   // name and version must be string. If statement below is not needed, but it's for type safety.
   if (!name || !version) {
     throw new Error("Internal error: `name` or `version` not found.");
@@ -104,7 +98,7 @@ export async function getMsg(
     "📦",
     `${styleText("bold", nameVer)}${styleText("dim", info)}`,
     "➜",
-    styleText("blue", [name, ...command.slice(1)].join(" ")),
+    styleText("blue", [name, ...command.slice(2)].join(" ")),
   ].join(" ");
 }
 
