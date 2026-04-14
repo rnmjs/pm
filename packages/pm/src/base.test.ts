@@ -18,6 +18,13 @@ import { defaultVersions } from "./constants.ts";
 import { detect } from "./utils/detector.ts";
 
 describe("base", () => {
+  beforeAll(() => {
+    // Clear any pre-existing JRM_MULTISHELL_PATH env vars so that
+    // tests are not affected by them.
+    Reflect.deleteProperty(process.env, "JRM_MULTISHELL_PATH_OF_NPM");
+    Reflect.deleteProperty(process.env, "JRM_MULTISHELL_PATH_OF_YARN");
+    Reflect.deleteProperty(process.env, "JRM_MULTISHELL_PATH_OF_PNPM");
+  });
   const spawnMock = vi.spyOn(childProcess, "spawn").mockImplementation(
     () =>
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- optimize it later

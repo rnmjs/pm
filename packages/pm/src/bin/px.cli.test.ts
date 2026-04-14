@@ -1,8 +1,16 @@
 import process from "node:process";
-import { describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { getPackageJson } from "../common.ts";
 
 describe("px.cli", () => {
+  beforeAll(() => {
+    // Clear any pre-existing JRM_MULTISHELL_PATH env vars so that
+    // tests are not affected by them.
+    Reflect.deleteProperty(process.env, "JRM_MULTISHELL_PATH_OF_NPM");
+    Reflect.deleteProperty(process.env, "JRM_MULTISHELL_PATH_OF_YARN");
+    Reflect.deleteProperty(process.env, "JRM_MULTISHELL_PATH_OF_PNPM");
+  });
+
   const exitMock = vi
     .spyOn(process, "exit")
     .mockImplementationOnce(() => undefined as never);

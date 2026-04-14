@@ -29,19 +29,35 @@ describe("version", () => {
   });
 
   it("should print default version for shims", () => {
+    const {
+      JRM_MULTISHELL_PATH_OF_NPM: _,
+      JRM_MULTISHELL_PATH_OF_YARN: __,
+      JRM_MULTISHELL_PATH_OF_PNPM: ___,
+      ...cleanEnv
+    } = process.env;
     for (const packageManager of ["npm", "yarn", "pnpm"] as const) {
       const version = childProcess.execSync(
         `${process.execPath} ${path.join(process.cwd(), "src", "shims", `${packageManager}.cli.ts`)} -v`,
-        { cwd: process.env["HOME"], encoding: "utf8" },
+        {
+          cwd: process.env["HOME"],
+          encoding: "utf8",
+          env: cleanEnv,
+        },
       );
       expect(version.trim()).toBe(defaultVersions[packageManager]);
     }
   });
 
   it("should print version twice for pm", () => {
+    const {
+      JRM_MULTISHELL_PATH_OF_NPM: _,
+      JRM_MULTISHELL_PATH_OF_YARN: __,
+      JRM_MULTISHELL_PATH_OF_PNPM: ___,
+      ...cleanEnv
+    } = process.env;
     const version = childProcess.execSync(
       `${process.execPath} ${path.join(process.cwd(), "src", "bin", "pm.cli.ts")} -v`,
-      { cwd: process.env["HOME"], encoding: "utf8" },
+      { cwd: process.env["HOME"], encoding: "utf8", env: cleanEnv },
     );
     expect(version.split(defaultVersions.npm).length).toBe(3);
   });

@@ -13,6 +13,15 @@ const envKeys = {
 };
 
 describe("get-msg", () => {
+  beforeAll(() => {
+    // Clear any pre-existing JRM_MULTISHELL_PATH env vars so that
+    // tests in the "corepack format" group are not affected by them.
+    // Individual test groups will set them back as needed.
+    Reflect.deleteProperty(process.env, envKeys.npm);
+    Reflect.deleteProperty(process.env, envKeys.yarn);
+    Reflect.deleteProperty(process.env, envKeys.pnpm);
+  });
+
   describe("corepack format ['/path/to/corepack', 'npm@11.0.0', '-v']", () => {
     it("should return npm by default", async () => {
       const msg = await getMsg(undefined, ["foo"]);

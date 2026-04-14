@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { styleText } from "node:util";
 import corepackPkgJson from "corepack/package.json" with { type: "json" };
 import semver from "semver";
+import which from "which";
 import { getPackageJson } from "./common.ts";
 import { defaultVersions, executorMap, type SupportedPm } from "./constants.ts";
 import type { DetectResult } from "./utils/detector.ts";
@@ -53,7 +54,11 @@ export async function run(
   execute?: boolean,
 ): Promise<number> {
   const command = await getCommand(detectResult, args, execute);
-  const cp = childProcess.spawn(process.execPath, command, {
+  const binPath = path.isAbsolute(command[0])
+    ? command[0]
+    : await which(command[0]);
+  const arg = [binPath, ...command.slice(1)];
+  const cp = childProcess.spawn(process.execPath, arg, {
     stdio: "inherit",
     env: {
       COREPACK_DEFAULT_TO_LATEST: "0",
