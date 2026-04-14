@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.6.10
+
+### Patch Changes
+
+- 1f427c9: fix: fix crash
+
 ## 0.6.9
 
 ### Patch Changes
