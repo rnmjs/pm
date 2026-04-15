@@ -13,4 +13,7 @@ await build({
   outbase: "src",
   external: Object.keys(pkgJson.dependencies),
   minify: true,
+  banner: {
+    js: "const require = globalThis.require ?? (await import('node:module')).createRequire(import.meta.url);",
+  },
 });
