@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.6.11
+
+### Patch Changes
+
+- 7626a34: fix: add banner to build.cli.ts to avoid crash
+
 ## 0.6.10
 
 ### Patch Changes
