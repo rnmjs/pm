@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.6.12
+
+### Patch Changes
+
+- 74b5057: feat: add version lookup for direct format and prepend 'corepack' prefix to output
+
 ## 0.6.11
 
 ### Patch Changes
