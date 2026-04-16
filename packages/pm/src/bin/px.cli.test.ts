@@ -24,7 +24,7 @@ describe("px.cli", () => {
     // expect(exitMock).toHaveBeenCalledWith(0); // TODO: Uncomment this later
     expect(logMock).toHaveBeenCalledTimes(1);
     expect(logMock).toHaveBeenCalledWith(
-      `📦 [pnpm@10.28.1](pm@${packageJson.version}) ➜ pnpx @rnm/pm -v`,
+      `📦 [pnpm@10.28.1](pm@${packageJson.version}) ➜ corepack pnpx @rnm/pm -v`,
     );
     process.argv.splice(-2);
   });

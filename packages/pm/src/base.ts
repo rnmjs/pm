@@ -6,6 +6,7 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { styleText } from "node:util";
 import corepackPkgJson from "corepack/package.json" with { type: "json" };
+import { findUp } from "find-up-simple";
 import semver from "semver";
 import which from "which";
 import { getPackageJson } from "./common.ts";
@@ -117,7 +118,7 @@ export async function getMsg(
       "📦",
       `${styleText("bold", `[${pmName}@${version}]`)}${styleText("dim", info)}`,
       "➜",
-      styleText("blue", [name, ...command.slice(2)].join(" ")),
+      styleText("blue", ["corepack", name, ...command.slice(2)].join(" ")),
     ].join(" ");
   }
 
@@ -126,9 +127,26 @@ export async function getMsg(
   if (!name) {
     throw new Error("Internal error: `name` not found.");
   }
+  let version = "";
+  try {
+    const binPath = await which(name);
+    const realPath = await fs.realpath(binPath);
+    const pkgJsonPath = await findUp("package.json", {
+      cwd: path.dirname(realPath),
+    });
+    if (pkgJsonPath) {
+      const pkg = JSON.parse(await fs.readFile(pkgJsonPath, "utf8"));
+      if (pkg.name === name) {
+        version = pkg.version;
+      }
+    }
+  } catch {
+    // Ignore errors, version stays undefined.
+  }
+  const versionPart = version ? `@${version}` : "";
   return [
     "📦",
-    `${styleText("bold", `[${name}]`)}${styleText("dim", info)}`,
+    `${styleText("bold", `[${name}${versionPart}]`)}${styleText("dim", info)}`,
     "➜",
     styleText("blue", command.join(" ")),
   ].join(" ");

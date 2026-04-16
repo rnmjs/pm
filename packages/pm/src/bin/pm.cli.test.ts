@@ -24,7 +24,7 @@ describe("pm.cli", () => {
     expect(exitMock).toHaveBeenCalledWith(0);
     expect(logMock).toHaveBeenCalledTimes(1);
     expect(logMock).toHaveBeenCalledWith(
-      `📦 [pnpm@10.28.1](pm@${packageJson.version}) ➜ pnpm -v`,
+      `📦 [pnpm@10.28.1](pm@${packageJson.version}) ➜ corepack pnpm -v`,
     );
     process.argv.pop();
   });

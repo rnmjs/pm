@@ -27,7 +27,7 @@ describe("get-msg", () => {
       const msg = await getMsg(undefined, ["foo"]);
       const packageJson = getPackageJson();
       expect(msg).toBe(
-        `📦 ${styleText("bold", `[npm@${defaultVersions.npm}]`)}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "npm foo")}`,
+        `📦 ${styleText("bold", `[npm@${defaultVersions.npm}]`)}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "corepack npm foo")}`,
       );
     });
 
@@ -43,7 +43,7 @@ describe("get-msg", () => {
       const msg = await getMsg(undefined, ["--version"], true);
       const packageJson = getPackageJson();
       expect(msg).toBe(
-        `📦 ${styleText("bold", `[npm@${defaultVersions.npm}]`)}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "npx --version")}`,
+        `📦 ${styleText("bold", `[npm@${defaultVersions.npm}]`)}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "corepack npx --version")}`,
       );
     });
 
@@ -55,7 +55,7 @@ describe("get-msg", () => {
       );
       const packageJson = getPackageJson();
       expect(msg).toBe(
-        `📦 ${styleText("bold", "[pnpm@8.0.0]")}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "pnpx create my-app")}`,
+        `📦 ${styleText("bold", "[pnpm@8.0.0]")}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "corepack pnpx create my-app")}`,
       );
     });
 
@@ -67,7 +67,7 @@ describe("get-msg", () => {
       );
       const packageJson = getPackageJson();
       expect(msg).toBe(
-        `📦 ${styleText("bold", "[yarn@4.0.0]")}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "yarnpkg add lodash")}`,
+        `📦 ${styleText("bold", "[yarn@4.0.0]")}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "corepack yarnpkg add lodash")}`,
       );
     });
 
@@ -79,7 +79,7 @@ describe("get-msg", () => {
       ]);
       const packageJson = getPackageJson();
       expect(msg).toBe(
-        `📦 ${styleText("bold", "[npm@10.0.0]")}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "npm run build --verbose")}`,
+        `📦 ${styleText("bold", "[npm@10.0.0]")}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "corepack npm run build --verbose")}`,
       );
     });
 
@@ -87,7 +87,7 @@ describe("get-msg", () => {
       const msg = await getMsg({ name: "yarn", version: "1.22.0" }, []);
       const packageJson = getPackageJson();
       expect(msg).toBe(
-        `📦 ${styleText("bold", "[yarn@1.22.0]")}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "yarn")}`,
+        `📦 ${styleText("bold", "[yarn@1.22.0]")}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "corepack yarn")}`,
       );
     });
 
@@ -96,7 +96,7 @@ describe("get-msg", () => {
       expect(typeof msg).toBe("string");
       const packageJson = getPackageJson();
       expect(msg).toBe(
-        `📦 ${styleText("bold", `[npm@${defaultVersions.npm}]`)}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "npm --version")}`,
+        `📦 ${styleText("bold", `[npm@${defaultVersions.npm}]`)}${styleText("dim", `(pm@${packageJson.version})`)} ➜ ${styleText("blue", "corepack npm --version")}`,
       );
     });
   });
