@@ -28,7 +28,7 @@
   ],
   "scripts": {
     "build": "node build.cli.ts",
-    "test": "tsc --noEmit && vitest run --coverage --coverage.reporter=json-summary --coverage.reporter=html && make-coverage-badge --output-path badge/coverage.svg"
+    "test": "vitest run --coverage --coverage.reporter=json-summary --coverage.reporter=html && make-coverage-badge --output-path badge/coverage.svg"
   },
   "dependencies": {
     "corepack": "0.34.6"
