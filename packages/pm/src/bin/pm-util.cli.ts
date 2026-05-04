@@ -2,7 +2,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
-import { fileURLToPath } from "node:url";
 import {
   detect,
   executorMap,
@@ -111,8 +110,8 @@ async function enableShim(): Promise<void> {
   const installDirectory = await fs.realpath(path.dirname(currentFile));
 
   // 2. Get shimsDirectory
-  const importMetaFile = fileURLToPath(import.meta.url);
-  const importMetaDirname = path.dirname(importMetaFile);
+  const importMetaFile = import.meta.filename;
+  const importMetaDirname = import.meta.dirname;
   const shimsDirectory = path.join(importMetaDirname, "..", "shims");
 
   // 3. Get extension

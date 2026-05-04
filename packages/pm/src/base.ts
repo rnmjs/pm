@@ -156,13 +156,13 @@ async function getDownloadedVersions(pm: SupportedPm) {
   const pmFolder = path.join(getCorepackHome(), pm);
   return (await fs.readdir(pmFolder).catch(() => []))
     .filter((file) => semver.valid(file))
-    .sort((x, y) => semver.compare(y, x)); // desc
+    .toSorted((x, y) => semver.compare(y, x)); // desc
 }
 
 async function getRemoteVersions(pm: SupportedPm) {
   return (await fetchPmVersions(pm))
     .filter((version) => semver.valid(version))
-    .sort((x, y) => semver.compare(y, x)); // desc
+    .toSorted((x, y) => semver.compare(y, x)); // desc
 }
 
 async function getExecutingPmAndVersion(

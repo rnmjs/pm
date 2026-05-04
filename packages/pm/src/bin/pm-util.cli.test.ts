@@ -1,12 +1,11 @@
 import childProcess from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import { getPackageJson } from "../common.ts";
 
 const packageJson = getPackageJson();
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = import.meta.dirname;
 const cliPath = path.join(__dirname, "pm-util.cli.ts");
 
 describe("pm-util.cli", () => {
