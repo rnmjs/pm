@@ -31,7 +31,7 @@
     "test": "vitest run --coverage --coverage.reporter=json-summary --coverage.reporter=html && make-coverage-badge --output-path badge/coverage.svg"
   },
   "dependencies": {
-    "corepack": "0.34.6"
+    "corepack": "0.34.7"
   },
   "devDependencies": {
     "@types/node": "20.12.14",
