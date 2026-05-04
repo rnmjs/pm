@@ -1,5 +1,11 @@
 # @rnm/pm
 
+## 0.6.13
+
+### Patch Changes
+
+- 6d071b9: chore: upgrade deps
+
 ## 0.6.12
 
 ### Patch Changes
