@@ -8,7 +8,7 @@ import {
   executorMap,
   getPackageJson,
   semver,
-  whichPmRuns,
+  whichPMRuns,
   type SupportedPm,
 } from "../index.ts";
 
@@ -49,7 +49,7 @@ function help() {
 }
 
 async function checkPm(): Promise<void> {
-  const currentPm = whichPmRuns();
+  const currentPm = whichPMRuns();
   if (!currentPm) {
     console.error("❌ Unable to detect the current package manager");
     process.exit(1);

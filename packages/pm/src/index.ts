@@ -5,4 +5,4 @@ export { executeShim } from "./execute-shim.ts";
 export { detect } from "./utils/detector.ts";
 export { isProject } from "./utils/is-project.ts";
 export { default as semver } from "semver";
-export { default as whichPmRuns } from "which-pm-runs";
+export { whichPMRuns } from "which-pm-runs";
