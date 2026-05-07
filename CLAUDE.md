@@ -56,7 +56,3 @@ pnpm vitest run path/to/test.test.ts
 - Uses `fenge` for linting and `esbuild` for building.
 - TypeScript config extends `fenge/tsconfig` and `fenge/tsconfig/node`.
 - Tests use `vitest`.
-
-## Commit Workflow
-
-Before committing `fix` or `feat` type changes, create a changeset file in the `.changeset` directory. The file header should list all the affected package name(s), and the content should be a single English sentence starting with `fix:` or `feat:`. Use the **same** sentence as the commit message.
