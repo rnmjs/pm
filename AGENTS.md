@@ -12,7 +12,7 @@ This is a pnpm workspace monorepo. The only package is `packages/pm/`.
 
 ### Common Scripts
 
-Read the root package.json for common scripts.
+Read `scripts` field of the root package.json for common scripts.
 
 ### Directory Structure
 
